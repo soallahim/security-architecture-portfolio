@@ -1,15 +1,34 @@
 
 # Security Architecture Portfolio
 
-A collection of practical security architecture reviews, reference designs, and technical case studies.
+Practical security architecture projects demonstrating secure design, risk-based assessments, and technical security decision-making.
 
-## Projects
+## Featured Projects
 
-### 01. Network Segmentation & Traffic Flow Security Review
+### 01. Enterprise Network Security Architecture — Assessment & Redesign
 
-A practical case study focused on network segmentation, firewall controls, and secure communication between security zones.
+An end-to-end security architecture case study for a fictional enterprise environment.
 
-[View Project](./network-segmentation-review/README.md)
+The project demonstrates how to assess an existing network architecture, identify security risks, and develop a more secure design based on business requirements and security best practices.
+
+**Key Focus Areas**
+- Enterprise Network Security
+- Network Segmentation & Traffic Flow Analysis
+- Firewall Architecture & Access Control
+- Security Risk Assessment
+- Secure Architecture Design
+- Security Controls & Validation
+
+**Project Deliverables**
+- Current & Proposed Architecture Diagrams
+- Security Requirements
+- Traffic Flow Matrix
+- Security Assessment Findings
+- Risk Register
+- Architecture Decision Records
+- Validation Plan
+
+[Explore the Project](./network-segmentation-review/README.md)
 
 ---
 
