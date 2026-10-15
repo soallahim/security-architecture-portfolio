@@ -28,7 +28,7 @@ The project demonstrates how to assess an existing network architecture, identif
 - Architecture Decision Records
 - Validation Plan
 
-[Explore the Project](./network-segmentation-review/README.md)
+[Explore the Project](./enterprise-network-security-review/README.md)
 
 ---
 
