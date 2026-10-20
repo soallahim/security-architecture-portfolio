@@ -226,7 +226,7 @@ Five network connectivity scenarios were executed to evaluate selected firewall 
 
 **[View Security Validation Evidence](evidence/README.md)**
 
-The evidence register includes screenshots supporting selected test results, the initial anti-lockout finding, and the post-remediation firewall behavior.
+The evidence register includes published screenshots for selected tests (LAB-01 through LAB-04), including the anti-lockout finding and remediation. LAB-05 connectivity was confirmed during testing, but a dedicated LAB-05 screenshot is not published.
 
 ## Key Security Finding
 
