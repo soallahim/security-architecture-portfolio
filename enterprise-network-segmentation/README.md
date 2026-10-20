@@ -145,7 +145,7 @@ The project follows a structured security architecture lifecycle.
 
 **Validation:** Five scenarios executed; four passed with supporting validation and one partially evidenced
 
-**Evidence Publication:** Pending
+**Evidence Publication:** Published — [View Validation Evidence](evidence/README.md)
 
 **Enterprise Target Architecture:** Proposed — Not Implemented
 
