@@ -1,3 +1,4 @@
+
 # Enterprise Network Segmentation & Security Architecture
 
 **Security Architecture | Network Segmentation | Risk Assessment | Firewall Validation**
@@ -6,21 +7,23 @@ An end-to-end cybersecurity architecture case study combining enterprise securit
 
 The project demonstrates how security requirements are translated into architecture decisions, firewall policies, and practical validation evidence.
 
+> **Project Scope:** The network segmentation laboratory was implemented and tested. The broader Enterprise X target architecture is a proposed design and was not deployed.
+
 ## Project Highlights
 
-- Designed a segmented network architecture using dedicated Application, Database, and Management zones.
-- Implemented least-privilege firewall policies using OPNsense.
+- Designed and implemented a segmented laboratory network with dedicated Application, Database, and Management zones.
+- Configured least-privilege firewall policies using OPNsense.
 - Executed five network connectivity validation scenarios.
 - Identified unintended firewall management access caused by an OPNsense anti-lockout rule.
-- Remediated the exposure and verified that authorized administrative access remained available.
-- Developed a fictional enterprise-scale target architecture with proposed VPN, MFA, DMZ, privileged access, and security monitoring controls.
-- Documented security findings, risk assessments, architecture decisions, and requirements traceability.
+- Remediated the unintended access and verified that authorized administrative access remained available.
+- Designed a fictional enterprise target architecture incorporating VPN, MFA, DMZ, privileged access, and centralized security monitoring.
+- Documented security findings, risk assessments, architecture decisions, validation evidence, and requirements traceability.
 
 ## Architecture Overview
 
 ### Implemented Laboratory
 
-The practical environment was deployed in Oracle VirtualBox.
+The practical environment was deployed using Oracle VirtualBox, OPNsense, Debian Linux, and Kali Linux.
 
 | Component | Technology / Address |
 |---|---|
@@ -31,23 +34,64 @@ The practical environment was deployed in Oracle VirtualBox.
 | Application Zone | `192.168.10.0/24` |
 | Database Zone | `192.168.20.0/24` |
 | Management Zone | `192.168.30.0/24` |
+| Firewall APP Interface | `192.168.10.1` |
+| Firewall DB Interface | `192.168.20.1` |
+| Firewall MGMT Interface | `192.168.30.1` |
+
+#### Implemented Lab Architecture — Network Diagram
+
+The diagram shows the deployed security zones and the communication paths covered by laboratory validation.
 
 ```mermaid
 flowchart TB
-    FW["OPNsense Firewall<br/>Inter-Zone Policy Enforcement"]
+    subgraph LAB["IMPLEMENTED LABORATORY - Oracle VirtualBox"]
+        direction TB
 
-    FW --> APPGW["APP Zone<br/>192.168.10.1/24"]
-    FW --> DBGW["DB Zone<br/>192.168.20.1/24"]
-    FW --> MGMTGW["MGMT Zone<br/>192.168.30.1/24"]
+        FW["OPNsense Firewall<br/>Inter-Zone Policy Enforcement"]
 
-    APPGW --> APP["APP-SERVER<br/>192.168.10.10"]
-    DBGW --> DB["DB-SERVER<br/>192.168.20.10"]
-    MGMTGW --> KALI["Kali Linux<br/>192.168.30.10"]
+        subgraph APP_ZONE["APPLICATION ZONE - 192.168.10.0/24"]
+            APP["APP-SERVER<br/>Debian Linux<br/>192.168.10.10"]
+        end
+
+        subgraph DB_ZONE["DATABASE TEST ZONE - 192.168.20.0/24"]
+            DB["DB-SERVER<br/>Debian Linux<br/>192.168.20.10<br/>Python Test Listener: TCP/5432"]
+        end
+
+        subgraph MGMT_ZONE["MANAGEMENT ZONE - 192.168.30.0/24"]
+            KALI["Kali Linux<br/>Authorized Management Workstation<br/>192.168.30.10"]
+        end
+
+        APP ---|"APP Interface: 192.168.10.1"| FW
+        DB ---|"DB Interface: 192.168.20.1"| FW
+        KALI ---|"MGMT Interface: 192.168.30.1"| FW
+    end
+
+    APP -->|"LAB-01: ALLOW TCP/5432"| DB
+    APP -.->|"LAB-02: DENY TCP/5433"| DB
+    APP -.->|"LAB-03: DENY HTTPS/443<br/>After Remediation"| FW
+    DB -.->|"LAB-04: Connection Failed<br/>Partially Evidenced"| FW
+    KALI -->|"LAB-05: ALLOW HTTPS/443"| FW
+
+    classDef firewall fill:#243447,color:#ffffff,stroke:#243447,stroke-width:2px
+    classDef server fill:#e8f1ff,color:#183153,stroke:#5484bd
+    classDef management fill:#e7f5ec,color:#175b36,stroke:#439766
+
+    class FW firewall
+    class APP,DB server
+    class KALI management
 ```
 
-All tested inter-zone communication was routed through OPNsense.
+**Diagram Legend**
 
-A temporary Python listener on TCP port 5432 simulated database service connectivity. PostgreSQL was not deployed.
+- **Solid arrows:** Tested and permitted communication.
+- **Dashed arrows:** Tested communication that was denied or failed.
+- **LAB-04:** Connection failure was observed, but complete firewall-log correlation remains unavailable.
+
+The OPNsense firewall provides policy enforcement between the three security zones.
+
+A temporary Python HTTP listener on TCP port `5432` simulated database service connectivity. PostgreSQL was not deployed.
+
+The diagram represents selected tested communication paths, not an exhaustive list of all possible network flows.
 
 ### Proposed Enterprise Target Architecture
 
@@ -63,24 +107,30 @@ A separate conceptual design for fictional Enterprise X includes:
 
 **These enterprise-scale components are proposed design elements and were not implemented in the laboratory.**
 
+For additional design details, see the [Secure Architecture Design](06-proposed-secure-architecture.md).
+
 ## Security Validation Results
 
-Five network connectivity scenarios were executed.
+Five network connectivity scenarios were executed to evaluate selected firewall policies and management access restrictions.
 
-| Test | Expected Behavior | Observed Result | Status |
-|---|---|---|---|
-| APP → DB TCP/5432 | Allow | Connected | Pass |
-| APP → DB TCP/5433 | Deny | Blocked; firewall log confirmed | Pass |
-| APP → Firewall MGMT TCP/443 | Deny | Blocked after remediation | Pass |
-| DB → Firewall MGMT TCP/443 | Deny | Connection failed; full log correlation incomplete | Partially Evidenced |
-| Kali → Firewall MGMT TCP/443 | Allow | Connected | Pass |
+| Test ID | Communication Path | Expected Behavior | Observed Result | Status |
+|---|---|---|---|---|
+| LAB-01 | APP → DB TCP/5432 | Allow | Connected | Pass |
+| LAB-02 | APP → DB TCP/5433 | Deny | Connection blocked; firewall log confirmed | Pass |
+| LAB-03 | APP → Firewall MGMT TCP/443 | Deny | Blocked after remediation | Pass |
+| LAB-04 | DB → Firewall MGMT TCP/443 | Deny | Connection failed; complete firewall-log correlation unavailable | Partially Evidenced |
+| LAB-05 | Kali → Firewall MGMT TCP/443 | Allow | Connected | Pass |
 
-**Validation Summary**
+### Validation Summary
 
 - **5** connectivity scenarios executed.
 - **4** scenarios passed with supporting validation.
 - **1** scenario partially evidenced.
 - **1** observed security finding remediated and retested.
+
+**[View Security Validation Evidence](evidence/README.md)**
+
+The evidence register includes screenshots supporting selected test results, the initial anti-lockout finding, and the post-remediation firewall behavior.
 
 ## Key Security Finding
 
@@ -90,17 +140,21 @@ During validation, the Application Server unexpectedly established a TCP connect
 
 Firewall log analysis identified the built-in anti-lockout rule as the permitting rule.
 
+This behavior conflicted with the intended management isolation policy.
+
 **Remediation performed:**
 
 1. Confirmed authorized management connectivity from Kali Linux.
-2. Disabled the administration anti-lockout rule.
+2. Disabled the OPNsense administration anti-lockout rule.
 3. Preserved the explicit authorized management access policy.
 4. Retested application-to-management connectivity.
 5. Confirmed the unauthorized connection was blocked.
 
 **Outcome:** The unintended management access path was removed for the tested application host without disrupting authorized administration.
 
-This finding demonstrates why firewall architecture validation must include automatically generated rules and observed traffic behavior, not only manually configured policies.
+This finding demonstrates why firewall security validation must include automatically generated rules and observed traffic behavior, not only manually configured policies.
+
+The finding was a firewall configuration and policy interaction, not evidence of an OPNsense software vulnerability.
 
 ## Project Documentation
 
@@ -113,11 +167,15 @@ The project follows a structured security architecture lifecycle.
 | 03 | [Traffic Flow Matrix](03-traffic-flow-matrix.md) | Assumed enterprise flows and observed laboratory traffic |
 | 04 | [Security Assessment Findings](04-security-assessment-findings.md) | Hypothetical findings and observed laboratory security issue |
 | 05 | [Risk Assessment & Register](05-risk-assessment-register.md) | Risk evaluation, treatment, and residual risk |
-| 06 | [Secure Architecture Design](06-proposed-secure-architecture.md) | Implemented lab and proposed enterprise target design |
+| 06 | [Secure Architecture Design](06-proposed-secure-architecture.md) | Implemented laboratory and proposed enterprise target design |
 | 07 | [Architecture Decision Records](07-architecture-decision-records.md) | Design rationale, alternatives, and trade-offs |
 | 08 | [Security Validation Plan & Results](08-security-validation-plan.md) | Executed tests, results, and evidence requirements |
-| 09 | [Target-State Traffic Flow Matrix](09-Target-State-Traffic-Flow-Matrix.md) | Implemented lab policies and proposed enterprise policies |
+| 09 | [Target-State Traffic Flow Matrix](09-Target-State-Traffic-Flow-Matrix.md) | Implemented laboratory policies and proposed enterprise policies |
 | 10 | [Requirements Traceability Matrix](10-requirements-traceability-matrix.md) | Requirements-to-controls-to-validation mapping |
+
+### Supporting Evidence
+
+[Security Validation Evidence Register](evidence/README.md) — Screenshots and explanations documenting selected firewall validation results.
 
 ## Methodology
 
@@ -135,19 +193,17 @@ The project follows a structured security architecture lifecycle.
 
 **Technologies:** OPNsense, Oracle VirtualBox, Debian Linux, Kali Linux.
 
-**Security Concepts:** Network Segmentation, Security Architecture, Firewall Policy Design, Least Privilege, Default Deny, Security Risk Assessment, Security Assurance, Architecture Decision Records, Requirements Traceability.
+**Security Concepts:** Security Architecture, Network Segmentation, Firewall Policy Design, Least Privilege, Default Deny, Security Risk Assessment, Security Assurance, Architecture Decision Records, Requirements Traceability.
 
 ## Project Status
 
-**Core Documentation:** Completed
-
-**Laboratory Implementation:** Completed for the documented test scope
-
-**Validation:** Five scenarios executed; four passed with supporting validation and one partially evidenced
-
-**Evidence Publication:** Published — [View Validation Evidence](evidence/README.md)
-
-**Enterprise Target Architecture:** Proposed — Not Implemented
+| Area | Status |
+|---|---|
+| Core Documentation | Completed |
+| Laboratory Implementation | Completed for the documented test scope |
+| Security Validation | 5 scenarios executed; 4 passed with supporting validation and 1 partially evidenced |
+| Evidence Publication | [Published — View Evidence](evidence/README.md) |
+| Enterprise Target Architecture | Proposed — Not Implemented |
 
 ## Scope and Limitations
 
@@ -155,10 +211,22 @@ This is an independently developed cybersecurity portfolio project.
 
 Enterprise X is fictional. The practical laboratory uses isolated virtual machines and does not represent a production deployment.
 
-The project does not claim to demonstrate production PostgreSQL security, enterprise VPN, MFA, SIEM integration, jump-host deployment, high availability, or comprehensive penetration testing.
+The laboratory demonstrates selected network security controls and does not claim to establish:
 
-All results are limited to the documented test scenarios.
+- Production PostgreSQL database security.
+- Application-level authentication or authorization.
+- Enterprise VPN or MFA implementation.
+- SIEM integration or centralized alerting.
+- Jump-host deployment.
+- DMZ or reverse-proxy deployment.
+- Firewall high availability or disaster recovery.
+- Comprehensive penetration testing.
+- Regulatory compliance certification.
+
+All implementation and validation claims are limited to the documented laboratory scope.
 
 ## Disclaimer
 
-All organizational details, enterprise architecture assumptions, and scenario-based risks are fictional. The implemented laboratory and its documented validation results are presented for educational and professional portfolio purposes only.
+All organizational details, enterprise architecture assumptions, and scenario-based risks are fictional.
+
+The implemented laboratory and its documented validation results are presented for educational and professional portfolio purposes only.
