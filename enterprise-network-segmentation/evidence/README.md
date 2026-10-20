@@ -1,5 +1,4 @@
-# Security Validation Evidence# Security Validation Evidence
-
+# Security Validation Evidence
 ## Overview
 
 This directory contains selected evidence from the OPNsense network segmentation laboratory.
