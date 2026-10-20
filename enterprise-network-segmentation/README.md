@@ -109,6 +109,89 @@ A separate conceptual design for fictional Enterprise X includes:
 
 For additional design details, see the [Secure Architecture Design](06-proposed-secure-architecture.md).
 
+#### Proposed Enterprise Architecture — Network Diagram
+
+> **Design Status:** Proposed only. The components below were not deployed or validated in the laboratory.
+
+```mermaid
+flowchart TB
+    INTERNET["Internet / External Networks"]
+
+    subgraph PERIMETER["PERIMETER SECURITY"]
+        PFW["Perimeter Firewall"]
+        VPN["Remote Access VPN<br/>MFA Required"]
+    end
+
+    subgraph DMZ_ZONE["DMZ"]
+        RP["Reverse Proxy<br/>Published Application Access"]
+    end
+
+    ISFW["Internal Segmentation Firewall<br/>Least-Privilege Policies"]
+
+    subgraph CORPORATE["CORPORATE ZONE"]
+        USERS["Corporate Users<br/>Employee Workstations"]
+    end
+
+    subgraph APPLICATION["APPLICATION ZONE"]
+        APP["Enterprise Application Servers"]
+    end
+
+    subgraph DATABASE["DATABASE ZONE"]
+        DB["Protected Database Servers"]
+    end
+
+    subgraph MANAGEMENT["MANAGEMENT ZONE"]
+        JUMP["Hardened Jump Host<br/>Privileged Administration"]
+        ADMIN["Authorized Administrators"]
+    end
+
+    subgraph MONITORING["SECURITY MONITORING"]
+        SIEM["Centralized SIEM<br/>Logs and Security Alerts"]
+    end
+
+    INTERNET --> PFW
+    INTERNET --> VPN
+    PFW --> RP
+    RP --> ISFW
+    VPN -->|"Authenticated and Authorized Access"| ISFW
+
+    USERS -->|"Approved Application Access"| ISFW
+    ISFW -->|"Approved Application Traffic"| APP
+    APP -->|"Restricted Database Services"| ISFW
+    ISFW -->|"Approved Database Traffic"| DB
+
+    ADMIN -->|"Privileged Access"| JUMP
+    JUMP -->|"Authorized Administration"| ISFW
+
+    PFW -.->|"Security Logs"| SIEM
+    VPN -.->|"Access Logs"| SIEM
+    ISFW -.->|"Firewall Logs"| SIEM
+    JUMP -.->|"Administrative Activity"| SIEM
+
+    classDef firewall fill:#243447,color:#ffffff,stroke:#243447,stroke-width:2px
+    classDef workload fill:#e8f1ff,color:#183153,stroke:#5484bd
+    classDef privileged fill:#e7f5ec,color:#175b36,stroke:#439766
+    classDef monitoring fill:#fff1db,color:#754b00,stroke:#c58b28
+
+    class PFW,ISFW firewall
+    class RP,APP,DB,USERS workload
+    class VPN,JUMP,ADMIN privileged
+    class SIEM monitoring
+```
+
+**Architecture Principles**
+
+- **Defense in Depth:** Separate perimeter protection from internal segmentation.
+- **Least Privilege:** Allow only approved communication between security zones.
+- **Controlled Remote Access:** Require MFA and destination-specific authorization.
+- **Privileged Access Security:** Route administrative access through a controlled jump host.
+- **Centralized Monitoring:** Forward relevant security events to the SIEM.
+- **Default Deny:** Restrict communication that is not explicitly authorized.
+
+The diagram is a high-level conceptual design. Detailed communication restrictions are defined in the [Target-State Traffic Flow Matrix](09-Target-State-Traffic-Flow-Matrix.md).
+
+**Implementation Status:** Conceptual enterprise design. VPN, MFA, DMZ, jump host, SIEM, and enterprise segmentation controls were not implemented or tested.
+
 ## Security Validation Results
 
 Five network connectivity scenarios were executed to evaluate selected firewall policies and management access restrictions.
