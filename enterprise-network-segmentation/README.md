@@ -268,6 +268,9 @@ The project follows a structured security architecture lifecycle.
 | 08 | [Security Validation Plan & Results](08-security-validation-plan.md) | Executed tests, results, and evidence requirements |
 | 09 | [Target-State Traffic Flow Matrix](09-Target-State-Traffic-Flow-Matrix.md) | Implemented laboratory policies and proposed enterprise policies |
 | 10 | [Requirements Traceability Matrix](10-requirements-traceability-matrix.md) | Requirements-to-controls-to-validation mapping |
+| 11 | [STRIDE Threat Model](11-stride-threat-model.md) | Design-time threats, trust boundaries, mitigations, and evidence limitations |
+| 12 | [Attack Path Analysis](12-attack-path-analysis.md) | Hypothetical attack paths and defensive controls; observed lab path clearly separated |
+| 13 | [Security Assurance Report](13-security-assurance-report.md) | Control validation, evidence coverage, and residual assurance gaps |
 
 ### Supporting Evidence
 
