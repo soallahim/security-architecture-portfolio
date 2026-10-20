@@ -40,37 +40,31 @@ The practical environment was deployed using Oracle VirtualBox, OPNsense, Debian
 
 #### Implemented Lab Architecture — Network Diagram
 
-The diagram shows the deployed security zones and the communication paths covered by laboratory validation.
+The topology below shows the actual three-zone laboratory. All inter-zone traffic is routed through OPNsense; no direct APP-to-DB network link exists.
 
 ```mermaid
 flowchart TB
-    subgraph LAB["IMPLEMENTED LABORATORY - Oracle VirtualBox"]
+    subgraph LAB["IMPLEMENTED LABORATORY — Oracle VirtualBox"]
         direction TB
 
-        FW["OPNsense Firewall<br/>Inter-Zone Policy Enforcement"]
+        FW["OPNsense Firewall<br/>Stateful Inter-Zone Policy Enforcement"]
 
-        subgraph APP_ZONE["APPLICATION ZONE - 192.168.10.0/24"]
+        subgraph APP_ZONE["APPLICATION ZONE — 192.168.10.0/24"]
             APP["APP-SERVER<br/>Debian Linux<br/>192.168.10.10"]
         end
 
-        subgraph DB_ZONE["DATABASE TEST ZONE - 192.168.20.0/24"]
-            DB["DB-SERVER<br/>Debian Linux<br/>192.168.20.10<br/>Python Test Listener: TCP/5432"]
+        subgraph DB_ZONE["DATABASE TEST ZONE — 192.168.20.0/24"]
+            DB["DB-SERVER<br/>Debian Linux<br/>192.168.20.10<br/>Temporary Python Listener: TCP/5432"]
         end
 
-        subgraph MGMT_ZONE["MANAGEMENT ZONE - 192.168.30.0/24"]
+        subgraph MGMT_ZONE["MANAGEMENT ZONE — 192.168.30.0/24"]
             KALI["Kali Linux<br/>Authorized Management Workstation<br/>192.168.30.10"]
         end
 
-        APP ---|"APP Interface: 192.168.10.1"| FW
-        DB ---|"DB Interface: 192.168.20.1"| FW
-        KALI ---|"MGMT Interface: 192.168.30.1"| FW
+        APP <-->|"APP interface: 192.168.10.1"| FW
+        DB <-->|"DB interface: 192.168.20.1"| FW
+        KALI <-->|"MGMT interface: 192.168.30.1"| FW
     end
-
-    APP -->|"LAB-01: ALLOW TCP/5432"| DB
-    APP -.->|"LAB-02: DENY TCP/5433"| DB
-    APP -.->|"LAB-03: DENY HTTPS/443<br/>After Remediation"| FW
-    DB -.->|"LAB-04: Connection Failed<br/>Partially Evidenced"| FW
-    KALI -->|"LAB-05: ALLOW HTTPS/443"| FW
 
     classDef firewall fill:#243447,color:#ffffff,stroke:#243447,stroke-width:2px
     classDef server fill:#e8f1ff,color:#183153,stroke:#5484bd
@@ -81,17 +75,19 @@ flowchart TB
     class KALI management
 ```
 
-**Diagram Legend**
+**Validated Firewall Policy Paths**
 
-- **Solid arrows:** Tested and permitted communication.
-- **Dashed arrows:** Tested communication that was denied or failed.
-- **LAB-04:** Connection failure was observed, but complete firewall-log correlation remains unavailable.
+| Test | Source | Destination | Intended Policy | Observed Result |
+|---|---|---|---|---|
+| LAB-01 | APP-SERVER | DB-SERVER TCP/5432 | Allow via OPNsense | Connected — Pass |
+| LAB-02 | APP-SERVER | DB-SERVER TCP/5433 | Deny via OPNsense | Firewall block confirmed — Pass |
+| LAB-03 | APP-SERVER | OPNsense MGMT TCP/443 | Deny | Blocked after anti-lockout remediation — Pass |
+| LAB-04 | DB-SERVER | OPNsense MGMT TCP/443 | Deny | Connection failed; firewall evidence incomplete |
+| LAB-05 | Kali workstation | OPNsense MGMT TCP/443 | Allow | HTTPS administration connected — Pass |
 
-The OPNsense firewall provides policy enforcement between the three security zones.
+**Interpretation:** The diagram represents physical/logical zone connectivity, while the table represents security policy decisions. Connections to the firewall's own management interface are distinct from transit traffic between APP and DB zones.
 
-A temporary Python HTTP listener on TCP port `5432` simulated database service connectivity. PostgreSQL was not deployed.
-
-The diagram represents selected tested communication paths, not an exhaustive list of all possible network flows.
+A temporary Python HTTP listener on TCP port `5432` simulated database service connectivity. PostgreSQL was not deployed. Only the listed test paths were validated.
 
 ### Proposed Enterprise Target Architecture
 
