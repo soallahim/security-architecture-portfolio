@@ -134,35 +134,74 @@ The following design represents a future enterprise-scale architecture for Enter
 
 ### 5.1 Enterprise Logical Architecture
 
+> **Design Status:** Conceptual architecture only. None of the enterprise components or policies below were deployed or validated in the laboratory.
+
+The diagram separates **network topology and enforcement boundaries** from **permitted traffic policies**. A connection to a firewall does not imply unrestricted access.
+
 ```mermaid
 flowchart TB
-    Internet["Internet / External Users"] --> EdgeFW["Perimeter Firewall / VPN Gateway"]
-    EdgeFW --> DMZ["DMZ / Reverse Proxy"]
-    EdgeFW --> SegFW["Internal Segmentation Firewall"]
+    EXT["Internet / External Clients"]
+    REMOTE["Remote Employees"]
+    VENDOR["Third-Party Vendors"]
 
-    Remote["Remote Employees"] -->|"VPN + MFA (Proposed)"| EdgeFW
-    Vendor["Third-Party Vendors"] -->|"Controlled VPN + MFA (Proposed)"| EdgeFW
+    EDGE["EdgeFW<br/>Perimeter Firewall and VPN Termination<br/>MFA and Identity Checks (Proposed)"]
+    SEG["SegFW<br/>Internal Segmentation Firewall<br/>Default-Deny Inter-Zone Policy"]
 
-    subgraph Protected["Proposed Enterprise Security Zones"]
-        Corp["Corporate Network"]
-        App["Application Zone"]
-        DB["Database Zone"]
-        PA["Privileged Access / Jump Host"]
-        Mgmt["Management Zone"]
-        SIEM["Security Monitoring / SIEM"]
+    subgraph DMZ_ZONE["DMZ — PUBLISHED SERVICES"]
+        PROXY["Reverse Proxy"]
     end
 
-    SegFW --- Corp
-    SegFW --- App
-    SegFW --- DB
-    SegFW --- PA
-    SegFW --- Mgmt
-    SegFW --- SIEM
+    subgraph CORP_ZONE["CORPORATE ZONE"]
+        USERS["Approved Corporate Workstations"]
+    end
 
-    DMZ -.->|"Approved backend access"| SegFW
+    subgraph APP_ZONE["APPLICATION ZONE"]
+        APP["Approved Application Hosts"]
+    end
+
+    subgraph DB_ZONE["DATABASE ZONE"]
+        DB["Protected Database Hosts"]
+    end
+
+    subgraph PA_ZONE["PRIVILEGED ACCESS ZONE"]
+        JUMP["Hardened Jump Host"]
+    end
+
+    subgraph MGMT_ZONE["MANAGEMENT ZONE"]
+        TARGETS["Approved Management Targets"]
+    end
+
+    subgraph SOC_ZONE["SECURITY MONITORING ZONE"]
+        SIEM["SIEM / Log Collector"]
+    end
+
+    EXT --> EDGE
+    REMOTE -->|"VPN + MFA"| EDGE
+    VENDOR -->|"Restricted VPN + MFA"| EDGE
+
+    EDGE --- PROXY
+    EDGE --- SEG
+
+    PROXY --- SEG
+    USERS --- SEG
+    APP --- SEG
+    DB --- SEG
+    JUMP --- SEG
+    TARGETS --- SEG
+    SIEM --- SEG
+
+    classDef firewall fill:#243447,color:#ffffff,stroke:#243447,stroke-width:2px
+    classDef workload fill:#e8f1ff,color:#183153,stroke:#5484bd
+    classDef privileged fill:#e7f5ec,color:#175b36,stroke:#439766
+    classDef monitoring fill:#fff1db,color:#754b00,stroke:#c58b28
+
+    class EDGE,SEG firewall
+    class PROXY,USERS,APP,DB,TARGETS workload
+    class JUMP,REMOTE,VENDOR privileged
+    class SIEM monitoring
 ```
 
-Connections to the segmentation firewall indicate logical enforcement boundaries, not unrestricted communication permissions.
+For proposed policy permissions and denied paths, see [Target-State Traffic Flow Matrix](09-Target-State-Traffic-Flow-Matrix.md), policies P-01 through P-12. The network links above are topology and enforcement boundaries, not blanket allow rules.
 
 ### 5.2 Proposed Enterprise Security Controls
 
