@@ -174,7 +174,7 @@ This was a firewall configuration and policy interaction, not evidence of an OPN
 | EV-06 | LAB-05 | Authorized Kali-to-OPNsense HTTPS management access |
 | EV-07 | Firewall Configuration | Explicit APP-to-DB TCP/5432 allow rule |
 
-Evidence files will be published separately in the project repository. This register describes the intended evidence set and does not claim that every screenshot has already been uploaded.
+Published screenshots EV-01 through EV-05 are indexed in the [Evidence Register](evidence/README.md). EV-06 (LAB-05) and EV-07 (firewall configuration) are documentation references in this table, not dedicated published screenshots. LAB-05 was recorded as a successful test without a standalone published image; LAB-04 remains partially evidenced due to incomplete firewall rule/action correlation.
 
 ## 8. Proposed Enterprise Validation — Not Executed
 
