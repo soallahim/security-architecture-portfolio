@@ -107,86 +107,103 @@ For additional design details, see the [Secure Architecture Design](06-proposed-
 
 #### Proposed Enterprise Architecture — Network Diagram
 
-> **Design Status:** Proposed only. The components below were not deployed or validated in the laboratory.
+> **Design Status:** Conceptual architecture only. None of the enterprise components or policies below were deployed or validated in the laboratory.
+
+The diagram separates **network topology and enforcement boundaries** from **permitted traffic policies**. A connection to a firewall does not imply unrestricted access.
 
 ```mermaid
 flowchart TB
-    INTERNET["Internet / External Networks"]
+    EXT["Internet / External Clients"]
+    REMOTE["Remote Employees"]
+    VENDOR["Third-Party Vendors"]
 
-    subgraph PERIMETER["PERIMETER SECURITY"]
-        PFW["Perimeter Firewall"]
-        VPN["Remote Access VPN<br/>MFA Required"]
+    EDGE["EdgeFW<br/>Perimeter Firewall and VPN Termination<br/>MFA and Identity Checks (Proposed)"]
+    SEG["SegFW<br/>Internal Segmentation Firewall<br/>Default-Deny Inter-Zone Policy"]
+
+    subgraph DMZ_ZONE["DMZ — PUBLISHED SERVICES"]
+        PROXY["Reverse Proxy"]
     end
 
-    subgraph DMZ_ZONE["DMZ"]
-        RP["Reverse Proxy<br/>Published Application Access"]
+    subgraph CORP_ZONE["CORPORATE ZONE"]
+        USERS["Approved Corporate Workstations"]
     end
 
-    ISFW["Internal Segmentation Firewall<br/>Least-Privilege Policies"]
-
-    subgraph CORPORATE["CORPORATE ZONE"]
-        USERS["Corporate Users<br/>Employee Workstations"]
+    subgraph APP_ZONE["APPLICATION ZONE"]
+        APP["Approved Application Hosts"]
     end
 
-    subgraph APPLICATION["APPLICATION ZONE"]
-        APP["Enterprise Application Servers"]
+    subgraph DB_ZONE["DATABASE ZONE"]
+        DB["Protected Database Hosts"]
     end
 
-    subgraph DATABASE["DATABASE ZONE"]
-        DB["Protected Database Servers"]
+    subgraph PA_ZONE["PRIVILEGED ACCESS ZONE"]
+        JUMP["Hardened Jump Host"]
     end
 
-    subgraph MANAGEMENT["MANAGEMENT ZONE"]
-        JUMP["Hardened Jump Host<br/>Privileged Administration"]
-        ADMIN["Authorized Administrators"]
+    subgraph MGMT_ZONE["MANAGEMENT ZONE"]
+        TARGETS["Approved Management Targets"]
     end
 
-    subgraph MONITORING["SECURITY MONITORING"]
-        SIEM["Centralized SIEM<br/>Logs and Security Alerts"]
+    subgraph SOC_ZONE["SECURITY MONITORING ZONE"]
+        SIEM["SIEM / Log Collector"]
     end
 
-    INTERNET --> PFW
-    INTERNET --> VPN
-    PFW --> RP
-    RP --> ISFW
-    VPN -->|"Authenticated and Authorized Access"| ISFW
+    EXT --> EDGE
+    REMOTE -->|"VPN + MFA"| EDGE
+    VENDOR -->|"Restricted VPN + MFA"| EDGE
 
-    USERS -->|"Approved Application Access"| ISFW
-    ISFW -->|"Approved Application Traffic"| APP
-    APP -->|"Restricted Database Services"| ISFW
-    ISFW -->|"Approved Database Traffic"| DB
+    EDGE --- PROXY
+    EDGE --- SEG
 
-    ADMIN -->|"Privileged Access"| JUMP
-    JUMP -->|"Authorized Administration"| ISFW
-
-    PFW -.->|"Security Logs"| SIEM
-    VPN -.->|"Access Logs"| SIEM
-    ISFW -.->|"Firewall Logs"| SIEM
-    JUMP -.->|"Administrative Activity"| SIEM
+    PROXY --- SEG
+    USERS --- SEG
+    APP --- SEG
+    DB --- SEG
+    JUMP --- SEG
+    TARGETS --- SEG
+    SIEM --- SEG
 
     classDef firewall fill:#243447,color:#ffffff,stroke:#243447,stroke-width:2px
     classDef workload fill:#e8f1ff,color:#183153,stroke:#5484bd
     classDef privileged fill:#e7f5ec,color:#175b36,stroke:#439766
     classDef monitoring fill:#fff1db,color:#754b00,stroke:#c58b28
 
-    class PFW,ISFW firewall
-    class RP,APP,DB,USERS workload
-    class VPN,JUMP,ADMIN privileged
+    class EDGE,SEG firewall
+    class PROXY,USERS,APP,DB,TARGETS workload
+    class JUMP,REMOTE,VENDOR privileged
     class SIEM monitoring
 ```
 
+**Proposed Security Policy Paths**
+
+| Policy | Source → Destination | Required Control | Status |
+|---|---|---|---|
+| P-01 | Approved corporate workstations → Application hosts | SegFW; scoped TCP/443 | Proposed |
+| P-02 | Corporate workstations → Database zone | Deny direct database access | Proposed |
+| P-03 | Application hosts → Approved database hosts | SegFW; scoped TCP/1433 | Proposed |
+| P-04 | Authorized vendor VPN group → Privileged access zone | EdgeFW + SegFW + IAM; MFA and time-bound access | Proposed |
+| P-05 | Vendor VPN network → Database zone | Deny direct access | Proposed |
+| P-06 | Standard corporate workstations → Management zone | Deny direct access | Proposed |
+| P-07 | Jump host → Approved management targets | SegFW; restricted administrative services and logging | Proposed |
+| P-08 | Internet clients → DMZ reverse proxy | EdgeFW; scoped TCP/443 | Proposed |
+| P-09 | DMZ reverse proxy → Approved application backend | SegFW; scoped TCP/443 | Proposed |
+| P-10 | Unapproved inter-zone traffic → Protected zones | Default deny at SegFW | Proposed |
+| P-11 | Authorized employee VPN group → Approved application hosts | EdgeFW + SegFW + IAM; MFA and scoped TCP/443 | Proposed |
+| P-12 | Approved log sources → SIEM / Log Collector | Approved transport; scoped filtering | Proposed |
+
 **Architecture Principles**
 
-- **Defense in Depth:** Separate perimeter protection from internal segmentation.
-- **Least Privilege:** Allow only approved communication between security zones.
-- **Controlled Remote Access:** Require MFA and destination-specific authorization.
-- **Privileged Access Security:** Route administrative access through a controlled jump host.
-- **Centralized Monitoring:** Forward relevant security events to the SIEM.
-- **Default Deny:** Restrict communication that is not explicitly authorized.
+- **Perimeter enforcement:** EdgeFW terminates remote-access VPN sessions and controls external exposure; the DMZ reverse proxy is reached only through approved perimeter policies.
+- **Internal segmentation:** SegFW controls access between corporate, application, database, privileged access, management, and monitoring zones.
+- **Remote and vendor access:** Authentication alone does not grant network-wide access. Employee and vendor sessions require destination-specific authorization.
+- **Privileged administration:** Authorized vendor access reaches the privileged access zone; subsequent jump-host connections to management targets are separately restricted and logged.
+- **Database isolation:** Direct corporate and vendor database access is denied. Only approved application-to-database services are permitted.
+- **Centralized monitoring:** Approved systems forward security events to the SIEM through restricted, defined transport paths.
+- **Default deny:** Unapproved inter-zone flows remain blocked.
 
-The diagram is a high-level conceptual design. Detailed communication restrictions are defined in the [Target-State Traffic Flow Matrix](09-Target-State-Traffic-Flow-Matrix.md).
+The [Target-State Traffic Flow Matrix](09-Target-State-Traffic-Flow-Matrix.md) is the authoritative source for policy identifiers and intended access decisions. Administrative protocols, SIEM transport, firewall high availability, routing, NAT, and detailed identity integrations remain open design items.
 
-**Implementation Status:** Conceptual enterprise design. VPN, MFA, DMZ, jump host, SIEM, and enterprise segmentation controls were not implemented or tested.
+**Implementation Status:** Proposed — Not Implemented or Tested.
 
 ## Security Validation Results
 
