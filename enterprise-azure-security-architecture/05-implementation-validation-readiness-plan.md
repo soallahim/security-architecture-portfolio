@@ -18,7 +18,7 @@ The original work sequence covered local OPNsense/Splunk readiness, WireGuard pr
 | Firewall diagnostic transport | Azure Firewall diagnostics sent through Event Hubs | Events observed in Splunk |
 | SIEM onboarding | Splunk Enterprise ingested firewall telemetry in `azure_security` | Azure/Splunk screenshots |
 | Detection engineering | Scheduled SEC-001 repeated-denial alert | Trigger observed 3 November 2026 |
-| Governance | Cost/cleanup planning recorded | Final billing and teardown not independently evidenced |
+| Governance | Cost/cleanup planning recorded | Project resource group deletion confirmed; final billing not independently evidenced |
 
 ## 3. Executed validation register
 
@@ -44,7 +44,7 @@ The original design contract is preserved for traceability, but an AZ-series res
 | VPN-03 | Unauthorized local admin → DB SSH denied | Management screenshots retained; not mapped to a complete AZ test |
 | ROUTE-01 | No bypass/asymmetric return on tested paths | Effective-route evidence exists; exhaustive path proof not established |
 | LOG-01 | Azure Firewall events searchable in Splunk | AZ-05 supports the observed event-ingestion assertion |
-| GOV-01 | Cost, secrets and teardown verified | Owner screenshot privacy review confirmed; billing, full secret scan and teardown not established |
+| GOV-01 | Cost, secrets and teardown verified | Owner screenshot privacy review confirmed; resource-group deletion and subscription inventory confirmed; billing and full secret scan not established |
 
 ## 5. Test acceptance and evidence integrity
 
@@ -60,10 +60,10 @@ A temporary NSG rule used for validation was removed; Network Watcher subsequent
 
 **Accepted for portfolio demonstration:** Hybrid connectivity for the selected test service, denied-event visibility, Event Hub/Splunk ingestion, SEC-001 detection execution, and the NSG rule decision.
 
-**Not claimed:** Production deployment approval, full network segmentation, authenticated database service, high availability, complete management test coverage, verified final cloud costs or completed teardown.
+**Not claimed:** Production deployment approval, full network segmentation, authenticated database service, high availability, complete management test coverage, verified final cloud costs; project resource-group deletion is confirmed.
 
 ## 8. Next assurance work, if the lab is ever reactivated
 
-Additional work would require explicit approval and cost review: original TCP/22 and reverse-direction tests; bidirectional route inspection; management-source positive/negative tests; peer and identity misuse checks; ingestion failure recovery; and resource/billing reconciliation. These are **future test recommendations**, not completed tasks.
+Additional work would require explicit approval and cost review: original TCP/22 and reverse-direction tests; bidirectional route inspection; management-source positive/negative tests; peer and identity misuse checks; ingestion failure recovery; and billing reconciliation. These are **future test recommendations**, not completed tasks.
 
 [Requirements](01-business-security-requirements.md) · [Architecture](03-target-security-architecture.md) · [Findings](08-security-assessment-findings.md) · [Validation](07-security-validation-evidence.md) · [Assurance](13-security-assurance-report.md).
