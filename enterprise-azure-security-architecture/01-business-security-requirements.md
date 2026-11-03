@@ -1,5 +1,17 @@
 # 01 — Business and Security Requirements
 
+## Current-state reconciliation — 3 November 2026
+
+The numbered sections below are the **original predeployment requirements baseline**, not a statement of current implementation status. Their historical “Not Tested”, cost gates, and proposed-region assumptions must not be read as current conclusions.
+
+**Current validated case-study scope:** Azure application workload in Japan East (`10.50.10.4`), routed WireGuard connectivity to a local HTTP test listener (`192.168.20.10:5432`), Azure Firewall and NSG controls, firewall diagnostics via Event Hubs to Splunk Enterprise, and SEC-001 scheduled detection. Three of three TCP/5432 connectivity tests succeeded; denied TCP/4444 events and an SEC-001 alert were observed. Network Watcher returned Deny for a selected NSG rule evaluation after temporary-rule removal.
+
+**Requirement-to-outcome mapping:** Controlled hybrid connectivity → AZ-01; restriction of unauthorized traffic → AZ-02 and AZ-04; centralized firewall monitoring → AZ-05; repeated-deny detection → AZ-03. The full [requirements traceability matrix](10-requirements-traceability-matrix.md) and [validation record](07-security-validation-evidence.md) provide current conclusions.
+
+**Scope integrity:** The local TCP/5432 service was a temporary HTTP listener, not PostgreSQL. The project does not claim comprehensive network assurance, production deployment, or validation of every originally proposed requirement.
+
+---
+
 > **Document context (3 November 2026):** This document preserves the original design and planning baseline. Its planning-stage labels, proposed region, and hypothetical architecture are historical and do not describe the current deployed lab. For the verified implementation and test evidence, see [06 — Implemented Security Controls](./06-implemented-security-controls.md) and [07 — Security Validation Evidence](./07-security-validation-evidence.md).
 **Project:** Enterprise Azure Security Architecture & Monitoring  
 **Status:** Proposed / Not Implemented  
