@@ -1,91 +1,115 @@
 # Enterprise Security Architecture — Microsoft Azure & Splunk Enterprise
 
-**Security Architecture · Hybrid Networking · Azure Firewall · SIEM · Detection Engineering**
+**Security Architecture | Hybrid Networking | Azure Firewall | SIEM Integration | Detection Engineering**
 
-A hands-on security architecture laboratory integrating an Azure application workload with a local network through a WireGuard gateway. Network traffic is controlled through Azure Firewall and network security rules, while Azure Firewall telemetry is streamed to Splunk Enterprise for investigation and alerting.
+An end-to-end **security architecture case study** covering requirements, risk-informed design, hybrid network enforcement, centralized security telemetry, and evidence-based control validation. The project focuses on **architecture decisions and assurance**, not publishing deployment scripts or configuration commands.
 
-## Architecture
+> **Scope:** An independently implemented Azure-to-local laboratory with selected security controls tested on 3 November 2026. Findings and conclusions are limited to the documented test paths; this is not a production deployment or a comprehensive security certification.
 
-```text
-Local laboratory (192.168.20.0/24)
-  └── WireGuard hybrid tunnel
-        └── Azure gateway / routed network (10.50.0.0/16)
-              ├── Azure Firewall (10.50.0.4)
-              │     └── Firewall Policy / network rules
-              └── Azure application VM (10.50.10.4)
+## Project Highlights
 
-Azure Firewall diagnostic logs
-  → Azure Event Hubs (azure-firewall-logs)
-  → Splunk Add-on for Microsoft Cloud Services
-  → Splunk Enterprise (index: azure_security)
-  → SEC-001 scheduled correlation alert
+- Designed and implemented routed hybrid connectivity between an Azure application workload and a segmented local laboratory using WireGuard.
+- Applied Azure Firewall Policy and NSG restrictions to selected authorized and unauthorized traffic.
+- Verified **3/3** TCP/5432 connections to a temporary **HTTP test listener** in the local lab; no PostgreSQL database was deployed.
+- Observed denied TCP/4444 events in Splunk through an Azure Firewall → Event Hubs → Splunk telemetry pipeline.
+- Implemented and tested **SEC-001**, a scheduled correlation alert for repeated firewall denials.
+- Removed a temporary NSG test exception and confirmed a **Deny** decision using Network Watcher IP flow verification.
+- Documented architecture decisions, trust boundaries, threat scenarios, attack paths, validation results, and assurance traceability.
+
+## Architecture Overview
+
+```mermaid
+flowchart LR
+    subgraph AZ["AZURE — JAPAN EAST"]
+      APP["Application workload\n10.50.10.4"]
+      FW["Azure Firewall\n10.50.0.4"]
+      WG["WireGuard gateway"]
+      EH["Azure Event Hubs"]
+    end
+    subgraph LOCAL["LOCAL SEGMENTED LAB"]
+      OPN["OPNsense / routed network"]
+      TEST["HTTP test listener\n192.168.20.10:5432"]
+      SPL["Splunk Enterprise\nazure_security"]
+    end
+    APP -->|"Selected test traffic"| FW
+    FW -->|"Routed hybrid path"| WG
+    WG <-->|"WireGuard tunnel"| OPN
+    OPN --> TEST
+    FW -->|"Firewall diagnostics"| EH
+    EH -->|"Event ingestion"| SPL
+    SPL --> ALERT["SEC-001 detection"]
 ```
 
-The diagram is a logical view of the tested traffic and telemetry paths; it is not a claim that every configuration step was automated.
+**Interpretation:** The diagram is a logical security architecture overview, not a packet-level assertion that all traffic traverses every depicted enforcement hop. Effective routing, policy scope and observed events are assessed separately in the [traffic flow matrix](09-security-traffic-flow-matrix.md).
 
-## Implemented and validated
+### Trust boundaries and security principles
 
-- Configured hybrid connectivity between the Azure application workload and a local laboratory using WireGuard and routed network segments.
-- Implemented an Azure Firewall Policy with a narrowly scoped test flow and an NSG default-deny control for private-network outbound traffic.
-- Validated **three successful TCP connection tests** from `10.50.10.4` to `192.168.20.10:5432`. The listener on TCP 5432 was used for a **test HTTP service**, not a PostgreSQL database.
-- Generated denied-connection events for a separate test flow to TCP 4444 and verified their ingestion into Splunk.
-- Enabled four Azure Firewall diagnostic log categories—`AZFWNetworkRule`, `AZFWApplicationRule`, `AZFWNatRule`, and `AZFWThreatIntel`—to an Event Hub.
-- Ingested Azure Firewall telemetry using the Splunk Add-on for Microsoft Cloud Services; confirmed event timestamps and indexing in `azure_security`.
-- Created and tested **SEC-001 — Repeated Firewall Denied Connections**, a scheduled Splunk alert; a triggered alert was observed on **3 November 2026**.
-- Removed the temporary NSG rule used during deny testing and confirmed that `Deny-Private-Networks-Outbound` blocked the tested flow.
-- Applied HTTPS-only and TLS 1.2 settings to the Azure Storage checkpoint account, with public blob access disabled.
-- Scoped the Splunk service principal to **Azure Event Hubs Data Receiver** on the specific Event Hub.
+| Boundary | Architecture objective | Control / decision |
+|---|---|---|
+| Azure application → routed network | Restrict workloads to approved destinations and services | Azure Firewall Policy and NSG |
+| Azure ↔ local lab | Provide hybrid connectivity without granting blanket network access | WireGuard and explicit routing |
+| Azure Firewall → telemetry transport | Make security decisions observable | Azure Firewall diagnostic settings and Event Hubs |
+| Event Hubs → Splunk | Consume security telemetry with limited privileges | Event Hub-scoped Data Receiver role |
+| Splunk events → detection | Turn denied-connection patterns into reviewable alerts | SEC-001 scheduled correlation |
 
-## Test evidence summary
+## Security Validation Results
 
-| Test | Observed result |
-| --- | --- |
-| Azure APP → local test listener, TCP 5432 | 3/3 successful connections |
-| Azure APP → local target, TCP 4444 | Denied; firewall events ingested |
-| Firewall → Event Hub → Splunk | Events observed in Splunk on 3 Nov 2026 |
-| SEC-001 scheduled detection | Triggered alert observed at 05:10:01 (Arab Standard Time), 3 Nov 2026 |
-| Temporary NSG test-rule removal | Removed; Network Watcher reported `Deny` by `Deny-Private-Networks-Outbound` |
+| Test | Expected security behavior | Observed result | Conclusion |
+|---|---|---|---|
+| AZ-01 | Permit selected Azure-to-local service | **3/3** TCP/5432 connections succeeded | Pass for TCP reachability |
+| AZ-02 | Deny unapproved TCP/4444 test flow | Denied events appeared in Splunk | Pass for tested deny-event visibility |
+| AZ-03 | Detect repeated denied connections | SEC-001 scheduled alert triggered | Pass for observed alert execution |
+| AZ-04 | Restrict selected private-network outbound flow | Network Watcher returned **Deny** after test-rule removal | Pass for evaluated NSG rule decision |
+| AZ-05 | Centralize Azure Firewall telemetry | Events indexed in Splunk through Event Hubs | Pass for observed ingestion pipeline |
 
-These observations were collected during lab validation. The summary avoids including credentials, full Azure resource IDs, raw captures, or sensitive configuration.
+**Evidence:** [View all 15 uploaded screenshots](evidence/README.md). All images are retained pending individual relevance and privacy review; not every screenshot is necessarily independent evidence for an Azure control.
 
-## Security engineering decisions
+## Key Security Finding and Remediation
 
-**Least privilege:** A dedicated service principal has receiver-only access scoped to the firewall log Event Hub.
+**AZ-F-01 — Temporary NSG exception retained beyond testing (configuration exposure scenario).** A temporary test exception was removed after validation, and the selected private-network outbound flow was reevaluated using Network Watcher. The resulting decision was **Deny** under `Deny-Private-Networks-Outbound`.
 
-**Controlled traffic:** Firewall network rules and NSG policies restrict the tested network flows. The temporary test exception was removed after validation.
+**Architectural lesson:** Temporary validation rules require explicit cleanup and post-change verification. This is a documented lab control-correction exercise, **not** evidence of an exploited vulnerability or production security incident.
 
-**Telemetry and detection:** Firewall diagnostics are collected centrally and converted into a scheduled Splunk detection, demonstrating an end-to-end control-validation workflow.
+[Security Assessment Findings](08-security-assessment-findings.md) · [Attack Path Analysis](12-attack-path-analysis.md)
 
-**Transport protection:** The checkpoint storage account was configured to require HTTPS and TLS 1.2.
+## Architecture Decisions
 
-## Architecture case-study approach
+- **Hybrid connectivity:** WireGuard provided a practical cloud-to-local tunnel while keeping authorization decisions at explicit network enforcement points.
+- **Layered enforcement:** Azure Firewall and NSG provide complementary controls with distinct policy scopes.
+- **Monitoring architecture:** Event Hubs decouples Azure diagnostic event production from Splunk ingestion and correlation.
+- **Least privilege:** The Splunk ingestion identity was assigned the Event Hubs Data Receiver role at the specific Event Hub scope.
+- **Test realism:** A temporary HTTP listener was used to validate network connectivity; no database-level access claims are made.
 
-This portfolio documents security requirements, risk-based architecture choices, trust boundaries, control validation, findings, and assurance evidence. It is intentionally presented as an architecture case study rather than an infrastructure-as-code or configuration tutorial.
+[Full Architecture Decision Records](04-architecture-decision-records.md)
 
-## Evidence handling
+## Security Assurance
 
-Published evidence is selected and sanitized to support architecture and security assurance claims. Operational commands, infrastructure templates, configuration files, credentials, and raw captures are not part of the public portfolio.
+The evidence supports selected hybrid connectivity, denied-traffic visibility, centralized log ingestion, a triggered detection, and an NSG rule decision. It does **not** establish complete segmentation across every port and host, application authentication, resilience under failure, or production readiness.
 
-*Independent educational laboratory. Resource names and IP addresses shown are illustrative of the lab configuration, not production systems.*
+[Requirements Traceability](10-requirements-traceability-matrix.md) · [Security Assurance Report](13-security-assurance-report.md)
 
-## Architecture documentation
+## Project Documentation
 
-The original numbered design baseline (01–05) is preserved; subsequent documents record the implementation, assessment, threat analysis, traceability, and evidence-based assurance. This is an architecture case study, not a configuration tutorial.
+The project follows a requirements-to-assurance security architecture lifecycle. Documents 01–05 preserve the original planning baseline and include a current-state reconciliation; 06–13 document implementation outcomes, analysis, and assurance.
 
-1. [01 — Business and Security Requirements](./01-business-security-requirements.md)
-2. [02 — Threat Model and Risk Assessment](./02-threat-model-risk-assessment.md)
-3. [03 — Target Security Architecture](./03-target-security-architecture.md)
-4. [04 — Architecture Decision Records](./04-architecture-decision-records.md)
-5. [05 — Implementation and Validation Readiness Plan](./05-implementation-validation-readiness-plan.md)
-6. [06 — Implemented Security Controls](./06-implemented-security-controls.md)
-7. [07 — Security Validation Evidence](./07-security-validation-evidence.md)
-8. [08 — Security Assessment Findings](./08-security-assessment-findings.md)
-9. [09 — Security Traffic Flow Matrix](./09-security-traffic-flow-matrix.md)
-10. [10 — Requirements Traceability Matrix](./10-requirements-traceability-matrix.md)
-11. [11 — STRIDE Threat Model](./11-stride-threat-model.md)
-12. [12 — Attack Path Analysis](./12-attack-path-analysis.md)
-13. [13 — Security Assurance Report](./13-security-assurance-report.md)
+| # | Document | Purpose |
+|---|---|---|
+| 01 | [Business & Security Requirements](01-business-security-requirements.md) | Business objectives, security requirements and original scope |
+| 02 | [Threat Model & Risk Assessment](02-threat-model-risk-assessment.md) | Initial threat scenarios, risks and treatment priorities |
+| 03 | [Target Security Architecture](03-target-security-architecture.md) | Original design and current logical hybrid architecture |
+| 04 | [Architecture Decision Records](04-architecture-decision-records.md) | Alternatives, decisions, trade-offs and observed outcomes |
+| 05 | [Implementation & Validation Readiness Plan](05-implementation-validation-readiness-plan.md) | Historical execution gates and current validation reconciliation |
+| 06 | [Implemented Security Controls](06-implemented-security-controls.md) | Control objectives, trust boundaries and implementation evidence |
+| 07 | [Security Validation Evidence](07-security-validation-evidence.md) | Executed tests, observations and validation interpretation |
+| 08 | [Security Assessment Findings](08-security-assessment-findings.md) | Findings, corrective actions and assurance implications |
+| 09 | [Security Traffic Flow Matrix](09-security-traffic-flow-matrix.md) | Approved/denied test flows and telemetry paths |
+| 10 | [Requirements Traceability Matrix](10-requirements-traceability-matrix.md) | Objective-to-control-to-test-to-evidence traceability |
+| 11 | [STRIDE Threat Model](11-stride-threat-model.md) | Detailed threats across hybrid and monitoring trust boundaries |
+| 12 | [Attack Path Analysis](12-attack-path-analysis.md) | Analytical attack paths and control assessment |
+| 13 | [Security Assurance Report](13-security-assurance-report.md) | Evidence-based assurance conclusion |
 
-[Security Validation Evidence Register](./evidence/README.md) — upload reviewed screenshots to the linked evidence folder.
+**[Evidence Register — 15 uploaded screenshots](evidence/README.md)**
 
-Selected screenshots are published only after security review. The written evidence register records observed results and identifies the supporting evidence; it does not itself constitute a published screenshot.
+---
+
+*Independent educational laboratory. Published architecture descriptions and validation records are limited to observed or explicitly identified proposed outcomes. No credentials, source templates, or operational deployment commands are included in this case study.*
