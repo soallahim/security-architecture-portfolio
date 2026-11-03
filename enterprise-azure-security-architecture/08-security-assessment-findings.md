@@ -4,7 +4,7 @@
 
 This review evaluates the implemented Azure-to-local hybrid test path, network enforcement, and Azure Firewall-to-Splunk telemetry. It distinguishes confirmed laboratory observations from design risks. A denied flow is not, by itself, proof of an exploitable vulnerability.
 
-## Observations and disposition
+## Test observations and disposition
 
 | ID | Observation | Security implication | Action / disposition | Supporting evidence |
 |---|---|---|---|---|
@@ -13,6 +13,9 @@ This review evaluates the implemented Azure-to-local hybrid test path, network e
 | AZ-F-03 | Denied TCP/4444 events were received by Splunk and the SEC-001 scheduled detection triggered | Demonstrates visibility and detection for the tested denied traffic | Recorded as a validated detection path; repeated alert executions are not independent incidents | AZ-02, AZ-03, AZ-05; [Firewall logs](./evidence/EV-AZURE-01-Firewall-Logs.png), [SEC-001](./evidence/EV-AZURE-02-SEC001-Triggered.png) |
 
 ## Assessment interpretation
+
+**Classification:** AZ-F-01 is a test-cleanup verification observation, not a confirmed vulnerability. AZ-F-02 and AZ-F-03 are positive assurance observations, not security defects.
+
 
 **Observed test cleanup:** AZ-F-01 records the removal of a temporary test exception and a subsequent NSG decision check. It is not presented as an exploited vulnerability or a production security incident.
 
