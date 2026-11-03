@@ -1,6 +1,4 @@
-# Enterprise Azure Security Architecture & Monitoring
-
-**Microsoft Azure & Splunk Enterprise**
+# Enterprise Security Architecture — Microsoft Azure & Splunk Enterprise
 
 **Security Architecture · Hybrid Networking · Azure Firewall · SIEM · Detection Engineering**
 
