@@ -15,7 +15,7 @@ This matrix uses the **original requirement identifiers** from [01 — Business 
 | SEC-07 | Defense in depth | Azure Firewall, NSG and host restrictions | AZ-04: Network Watcher returned Deny after temporary-rule removal | **Partially validated** — NSG decision only |
 | SEC-08 | Record and investigate policy decisions | Firewall diagnostics, Event Hubs, Splunk and SEC-001 | AZ-02, AZ-03, AZ-05 | **Validated for observed pipeline and alert** |
 | SEC-09 | Protect secrets and published evidence | Least-privilege ingestion role, storage transport controls, publication review | Owner confirmed screenshot sensitive-data review; configuration observations recorded | **Partially evidenced** — no full repository secret-scan claim |
-| SEC-10 | Maintain safe teardown and cost governance | Inventory, cost checks, cleanup plan | Historical plan documented; no confirmed final resource/billing reconciliation | **Not validated** |
+| SEC-10 | Maintain safe teardown and cost governance | Inventory, cost checks, cleanup plan | Azure CLI confirmed resource-group deletion (`false` on existence check); post-deletion subscription listing showed only two Network Watchers. Final billing pending | **Partially validated** — project resource cleanup confirmed |
 
 ## Verified evidence references
 
