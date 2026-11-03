@@ -29,7 +29,7 @@ This matrix uses the **original requirement identifiers** from [01 — Business 
 
 ## Assurance interpretation
 
-**Five of ten original security requirements have direct partial or full support from the five AZ tests** (SEC-02, SEC-04, SEC-05 through connectivity context, SEC-07, SEC-08); the remaining requirements have supporting configuration or ancillary screenshot material, or no confirmed matching test. This is a qualitative mapping, not a numerical compliance score. An original requirement should not be marked fully met merely because one associated test passed.
+**The five AZ tests directly support selected aspects of SEC-02, SEC-04, SEC-07 and SEC-08.** SEC-05 has supporting hybrid-connectivity context but no complete VPN-security validation. The other requirements have configuration observations, ancillary screenshot material, or no confirmed matching test. This is a qualitative mapping, not a numerical compliance score. An original requirement should not be marked fully met merely because one associated test passed.
 
 The TCP/5432 target was a temporary HTTP listener, not PostgreSQL. NSG IP flow verification is a rule-decision check, not end-to-end packet proof. Multiple scheduled alert executions are not independent incidents. Images remain in the [15-image evidence register](evidence/README.md), with all files retained.
 
