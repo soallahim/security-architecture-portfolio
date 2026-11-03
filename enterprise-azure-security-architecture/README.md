@@ -67,3 +67,10 @@ The Bicep and supporting scripts are maintained as lab engineering artifacts. So
 The public repository contains sanitized test outcomes. Original console outputs, screenshots, and operational logs should be reviewed and redacted before publication. Private keys, connection strings, SAS tokens, service-principal credentials, packet captures, and backup archives must not be committed.
 
 *Independent educational laboratory. Resource names and IP addresses shown are illustrative of the lab configuration, not production systems.*
+
+## Project documentation
+
+- [Implemented security controls](./SECURITY-IMPLEMENTATION.md)
+- [Validated results and evidence register](./VALIDATION-RESULTS.md)
+
+The evidence register identifies screenshot filenames; the screenshots and source package are prepared separately for publication after final visual review. No image or IaC file is represented as uploaded until it exists in this repository.
