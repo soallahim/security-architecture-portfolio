@@ -16,7 +16,7 @@ Examine plausible ways an adversary could cross the hybrid trust boundary or deg
 
 **References:** TF-01, TF-02; AZ-01, AZ-02; [Firewall logs](./evidence/EV-AZURE-01-Firewall-Logs.png).
 
-## AP-02 — Temporary network exception retained after testing
+## AP-02 — Risk of retaining temporary network exceptions
 
 **Entry point:** A permissive test-time NSG exception.
 
