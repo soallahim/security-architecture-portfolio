@@ -1,5 +1,38 @@
 # 03 — Target Security Architecture
 
+## Implemented laboratory architecture — 3 November 2026
+
+The sections below record the **original proposed target design**. In particular, any earlier region, route, or “not deployed” statements are historical planning assumptions. The verified lab was implemented in **Japan East**.
+
+```mermaid
+flowchart LR
+    subgraph LOCAL["Local segmented laboratory"]
+      TEST["HTTP test listener\n192.168.20.10:5432"]
+      OPN["OPNsense / local routing"]
+      SPL["Splunk Enterprise\nazure_security"]
+    end
+    subgraph AZURE["Azure — Japan East / 10.50.0.0/16"]
+      APP["Application VM\n10.50.10.4"]
+      FW["Azure Firewall\n10.50.0.4"]
+      WG["WireGuard gateway"]
+      EH["Azure Event Hubs"]
+    end
+    APP -->|"Selected tested flows"| FW
+    FW -->|"Hybrid routing path"| WG
+    WG <-->|"WireGuard tunnel"| OPN
+    OPN --> TEST
+    FW -->|"Diagnostic events"| EH
+    EH -->|"Splunk add-on ingestion"| SPL
+```
+
+**Diagram interpretation:** This is a logical view of the validated connectivity and telemetry architecture. It is not a complete packet-level topology or proof that every tested flow traversed every depicted hop; actual forwarding and inspection depend on the effective routes and policies.
+
+**Enforcement and visibility:** Azure Firewall Policy and NSG rules address different policy scopes. WireGuard provides hybrid transport, not unrestricted authorization. Azure Firewall diagnostic events were consumed through Event Hubs into Splunk, where SEC-001 triggered.
+
+**Verified tests:** AZ-01 (3/3 TCP/5432 HTTP-listener connections), AZ-02 (denied TCP/4444 events), AZ-03 (SEC-001 trigger), AZ-04 (NSG rule evaluation returned Deny), and AZ-05 (Azure Firewall telemetry ingestion). See [traffic flow matrix](09-security-traffic-flow-matrix.md) and [evidence register](evidence/README.md).
+
+---
+
 > **Document context (3 November 2026):** This document preserves the original design and planning baseline. Its planning-stage labels, proposed region, and hypothetical architecture are historical and do not describe the current deployed lab. For the verified implementation and test evidence, see [06 — Implemented Security Controls](./06-implemented-security-controls.md) and [07 — Security Validation Evidence](./07-security-validation-evidence.md).
 **Status:** Proposed; not deployed or tested. **Region:** UAE North (subject to availability).
 
