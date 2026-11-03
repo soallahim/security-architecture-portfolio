@@ -68,9 +68,16 @@ The public repository contains sanitized test outcomes. Original console outputs
 
 *Independent educational laboratory. Resource names and IP addresses shown are illustrative of the lab configuration, not production systems.*
 
-## Project documentation
+## Architecture documentation
 
-- [Implemented security controls](./SECURITY-IMPLEMENTATION.md)
-- [Validated results and evidence register](./VALIDATION-RESULTS.md)
+The project retains its original numbered design and assurance documents. Documents 01–05 record the design-stage baseline; documents 06–07 capture implemented controls and verified laboratory outcomes.
 
-The evidence register identifies screenshot filenames; the screenshots and source package are prepared separately for publication after final visual review. No image or IaC file is represented as uploaded until it exists in this repository.
+1. [01 — Business and Security Requirements](./01-business-security-requirements.md)
+2. [02 — Threat Model and Risk Assessment](./02-threat-model-risk-assessment.md)
+3. [03 — Target Security Architecture](./03-target-security-architecture.md)
+4. [04 — Architecture Decision Records](./04-architecture-decision-records.md)
+5. [05 — Implementation and Validation Readiness Plan](./05-implementation-validation-readiness-plan.md)
+6. [06 — Implemented Security Controls](./06-implemented-security-controls.md)
+7. [07 — Security Validation Evidence](./07-security-validation-evidence.md)
+
+Screenshots and source files are published only after security review and confirmation that they exist in this repository. The written evidence register describes observed results; it does not itself constitute a published screenshot.
