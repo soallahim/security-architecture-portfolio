@@ -45,7 +45,7 @@ The project evaluates how a small organization could establish controlled Azure-
 | SEC-07 | Layered network restrictions | AZ-04 Network Watcher NSG decision returned Deny | Partially validated |
 | SEC-08 | Record and investigate policy decisions | AZ-02, AZ-03, AZ-05: events ingested and scheduled alert triggered | Validated for observed event/detection path |
 | SEC-09 | Protect secrets and published evidence | Repository owner confirmed screenshot sensitive-data review; receiver-scope and storage configuration recorded | Partially evidenced; no full secret scan claimed |
-| SEC-10 | Preserve budget and teardown safeguards | Planning exists; final resource inventory/billing verification not provided | Not validated |
+| SEC-10 | Preserve budget and teardown safeguards | Deletion of project resource group confirmed via Azure CLI; subscription resource list showed only two Network Watchers. Final billing reconciliation pending | Partially validated — resource cleanup confirmed |
 
 **Acceptance rule:** A successful test satisfies only its stated assertion. Neither a TCP connection nor an NSG decision establishes comprehensive segmentation or application authorization.
 
@@ -69,6 +69,6 @@ The initial plan defined NET-01/02/03, VPN-01/02/03, ROUTE-01, LOG-01 and GOV-01
 
 **Accepted for portfolio demonstration:** Selected hybrid reachability, denied-event visibility, centralized Azure Firewall telemetry, scheduled alert execution, and the evaluated NSG deny decision.
 
-**Not accepted as proven:** Complete APP/DB separation, all reverse-direction denies, full tunnel peer hardening, complete management-access policy, teardown/billing closure, or production assurance.
+**Not accepted as proven:** Complete APP/DB separation, all reverse-direction denies, full tunnel peer hardening, complete management-access policy, final billing closure, or production assurance.
 
 **Traceability:** [Threat and risk register](02-threat-model-risk-assessment.md) · [Architecture](03-target-security-architecture.md) · [ADRs](04-architecture-decision-records.md) · [RTM](10-requirements-traceability-matrix.md) · [Assurance report](13-security-assurance-report.md).
