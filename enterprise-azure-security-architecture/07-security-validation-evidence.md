@@ -14,4 +14,4 @@ TCP 5432 was a temporary HTTP test listener, not a PostgreSQL database. The NSG 
 
 ## Published evidence and interpretation
 
-All 15 screenshots are uploaded to [the evidence register](./evidence/README.md). They are retained pending image-by-image relevance and privacy review. The Azure Firewall, SEC-001, and NSG screenshots linked above use actual filenames. A screenshot alone does not establish comprehensive security control effectiveness.
+All 15 screenshots are uploaded to [the evidence register](./evidence/README.md). They are retained; the repository owner has confirmed review for sensitive information. Evidence relevance and strength are assessed separately. The Azure Firewall, SEC-001, and NSG screenshots linked above use actual filenames. A screenshot alone does not establish comprehensive security control effectiveness.
