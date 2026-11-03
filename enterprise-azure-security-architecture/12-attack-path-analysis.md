@@ -14,7 +14,7 @@ Examine plausible ways an adversary could cross the hybrid trust boundary or deg
 
 **Control assessment:** The TCP/4444 test generated denied events visible in Splunk. The positive TCP/5432 test reached only the intended HTTP listener. These outcomes support selected policy enforcement but do not demonstrate comprehensive segmentation across all ports and hosts.
 
-**References:** TF-01, TF-02; AZ-01, AZ-02; EV-01.
+**References:** TF-01, TF-02; AZ-01, AZ-02; [Firewall logs](./evidence/EV-AZURE-01-Firewall-Logs.png).
 
 ## AP-02 — Temporary network exception retained after testing
 
@@ -24,7 +24,7 @@ Examine plausible ways an adversary could cross the hybrid trust boundary or deg
 
 **Control assessment:** The temporary rule was removed and Network Watcher IP flow verification subsequently returned Deny under `Deny-Private-Networks-Outbound`. This is an NSG decision check, not an exhaustive traversal assessment.
 
-**References:** AZ-F-01; AZ-04; EV-03.
+**References:** AZ-F-01; AZ-04; [NSG decision](./evidence/EV-AZURE-03-NSG-Deny.png).
 
 ## AP-03 — Loss of firewall telemetry visibility
 
@@ -34,7 +34,7 @@ Examine plausible ways an adversary could cross the hybrid trust boundary or deg
 
 **Control assessment:** Azure Firewall events were observed in Splunk and SEC-001 triggered. This confirms the tested pipeline at that time; continuous availability and failover were not stress-tested.
 
-**References:** TF-03, TF-04; AZ-03, AZ-05; EV-01, EV-02.
+**References:** TF-03, TF-04; AZ-03, AZ-05; [Firewall logs](./evidence/EV-AZURE-01-Firewall-Logs.png), [SEC-001](./evidence/EV-AZURE-02-SEC001-Triggered.png).
 
 ## Architectural conclusion
 
