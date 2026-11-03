@@ -58,13 +58,13 @@ These observations were collected during lab validation. The summary avoids incl
 
 **Transport protection:** The checkpoint storage account was configured to require HTTPS and TLS 1.2.
 
-## Source and deployment notes
+## Architecture case-study approach
 
-The Bicep and supporting scripts are maintained as lab engineering artifacts. Some configuration and validation steps were performed separately from infrastructure templates. Deployment results should be verified against the live environment before reusing templates; no claim of fully automated, one-command deployment is made.
+This portfolio documents security requirements, risk-based architecture choices, trust boundaries, control validation, findings, and assurance evidence. It is intentionally presented as an architecture case study rather than an infrastructure-as-code or configuration tutorial.
 
 ## Evidence handling
 
-The public repository contains sanitized test outcomes. Original console outputs, screenshots, and operational logs should be reviewed and redacted before publication. Private keys, connection strings, SAS tokens, service-principal credentials, packet captures, and backup archives must not be committed.
+Published evidence is selected and sanitized to support architecture and security assurance claims. Operational commands, infrastructure templates, configuration files, credentials, and raw captures are not part of the public portfolio.
 
 *Independent educational laboratory. Resource names and IP addresses shown are illustrative of the lab configuration, not production systems.*
 
@@ -80,4 +80,4 @@ The project retains its original numbered design and assurance documents. Docume
 6. [06 — Implemented Security Controls](./06-implemented-security-controls.md)
 7. [07 — Security Validation Evidence](./07-security-validation-evidence.md)
 
-Screenshots and source files are published only after security review and confirmation that they exist in this repository. The written evidence register describes observed results; it does not itself constitute a published screenshot.
+Selected screenshots are published only after security review. The written evidence register records observed results and identifies the supporting evidence; it does not itself constitute a published screenshot.
