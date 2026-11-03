@@ -25,7 +25,7 @@ Likelihood (L) and impact (I) each range from 1 (low) to 3 (high); inherent risk
 | R-05 | Missing firewall events impede investigation | 3×2 = 6 High | SEC-08, Event Hubs, Splunk | AZ-02 and AZ-05 demonstrate event ingestion; AZ-03 detection triggered. **Observed mitigation**, not continuous availability proof |
 | R-06 | Secrets exposed through repository or configuration | 2×3 = 6 High | SEC-09, publication hygiene | Owner reviewed screenshots for sensitive data; no comprehensive repository secret scan claimed. **Partially evidenced** |
 | R-07 | Single hybrid gateway/firewall interruption | 2×2 = 4 Medium | Availability planning | No HA/failover test claimed. **Accepted lab design trade-off; production risk unresolved** |
-| R-08 | Costs or undeleted resources exceed planned budget | 2×3 = 6 High | BUS-05, SEC-10 | Planning baseline exists; no final billing/resource reconciliation. **Not verified** |
+| R-08 | Costs or undeleted resources exceed planned budget | 2×3 = 6 High | BUS-05, SEC-10 | Project resource group deletion confirmed; subscription resource listing showed only two Network Watchers. Final billing reconciliation pending. **Cleanup evidenced; billing not verified** |
 | R-09 | Event Hub consumer misconfiguration or log loss | 2×2 = 4 Medium | SEC-08, SEC-09, scoped Data Receiver | Event ingestion observed; resilience, backlog and identity misuse not adversarially tested. **Partially mitigated** |
 
 ## 4. STRIDE mapping
@@ -47,7 +47,7 @@ Detailed scenario mechanics are in [11 — STRIDE Threat Model](11-stride-threat
 - **R-02:** Route-association/effective-route screenshots strengthen the design review, but do not alone establish inspected bidirectional forwarding.
 - **R-05 and R-09:** AZ-02/03/05 demonstrate the telemetry/detection path at the observed time, not sustained delivery or recovery from failure.
 - **R-06:** Screenshot review is distinct from scanning every historical Git commit or secret.
-- **R-08:** Budget compliance and cleanup remain unverified in the available record.
+- **R-08:** Project resource-group deletion and post-deletion subscription inventory are confirmed from operator-provided Azure CLI output; final charges and billing closure remain unverified.
 
 ## 6. Risk treatment decisions
 
