@@ -1,48 +1,71 @@
 # Enterprise Azure Security Architecture & Monitoring
 
-**Status: Planning / Proposed — no Azure resources deployed or security tests executed.**
+**Microsoft Azure & Splunk Enterprise**
 
-## Project overview
+**Security Architecture · Hybrid Networking · Azure Firewall · SIEM · Detection Engineering**
 
-This project will design, implement, and validate a small hybrid enterprise security architecture using Microsoft Azure, a local OPNsense lab, WireGuard, and Splunk Enterprise. The focus is on defensible architecture decisions, controlled traffic flows, observable security controls, and evidence-based assurance—not a product installation walkthrough.
+A hands-on security architecture laboratory integrating an Azure application workload with a local network through a WireGuard gateway. Network traffic is controlled through Azure Firewall and network security rules, while Azure Firewall telemetry is streamed to Splunk Enterprise for investigation and alerting.
 
-## Business problem
+## Architecture
 
-A fictional organization needs to isolate application and database workloads, control administrator access from an on-premises environment, and centrally review security-relevant network events. Uncontrolled lateral movement, exposed management services, and incomplete monitoring create avoidable risks.
+```text
+Local laboratory (192.168.20.0/24)
+  └── WireGuard hybrid tunnel
+        └── Azure gateway / routed network (10.50.0.0/16)
+              ├── Azure Firewall (10.50.0.4)
+              │     └── Firewall Policy / network rules
+              └── Azure application VM (10.50.10.4)
 
-## Proposed scope
+Azure Firewall diagnostic logs
+  → Azure Event Hubs (azure-firewall-logs)
+  → Splunk Add-on for Microsoft Cloud Services
+  → Splunk Enterprise (index: azure_security)
+  → SEC-001 scheduled correlation alert
+```
 
-- Separate Azure application, database, VPN, and firewall subnets.
-- Evaluate Azure Firewall Basic network rules, UDRs, NSGs, and routing symmetry.
-- Establish a client-initiated WireGuard tunnel from a local environment behind CGNAT.
-- Forward selected Azure security logs for analysis in a local Splunk Enterprise instance, subject to connector and cost feasibility.
-- Validate allowed and denied flows with test records, effective routes, firewall logs, and documented limitations.
+The diagram is a logical view of the tested traffic and telemetry paths; it is not a claim that every configuration step was automated.
 
-## Architecture status
+## Implemented and validated
 
-All network ranges, components, and policies are **proposed** and subject to pre-deployment verification. The initial concept uses Azure UAE North, three small Linux VMs (application, database, and WireGuard), Azure Firewall Basic, and a local OPNsense/Splunk lab. A diagram alone does not demonstrate that a traffic path is enforced.
+- Configured hybrid connectivity between the Azure application workload and a local laboratory using WireGuard and routed network segments.
+- Implemented an Azure Firewall Policy with a narrowly scoped test flow and an NSG default-deny control for private-network outbound traffic.
+- Validated **three successful TCP connection tests** from `10.50.10.4` to `192.168.20.10:5432`. The listener on TCP 5432 was used for a **test HTTP service**, not a PostgreSQL database.
+- Generated denied-connection events for a separate test flow to TCP 4444 and verified their ingestion into Splunk.
+- Enabled four Azure Firewall diagnostic log categories—`AZFWNetworkRule`, `AZFWApplicationRule`, `AZFWNatRule`, and `AZFWThreatIntel`—to an Event Hub.
+- Ingested Azure Firewall telemetry using the Splunk Add-on for Microsoft Cloud Services; confirmed event timestamps and indexing in `azure_security`.
+- Created and tested **SEC-001 — Repeated Firewall Denied Connections**, a scheduled Splunk alert; a triggered alert was observed on **3 November 2026**.
+- Removed the temporary NSG rule used during deny testing and confirmed that `Deny-Private-Networks-Outbound` blocked the tested flow.
+- Applied HTTPS-only and TLS 1.2 settings to the Azure Storage checkpoint account, with public blob access disabled.
+- Scoped the Splunk service principal to **Azure Event Hubs Data Receiver** on the specific Event Hub.
 
-## Delivery stages
+## Test evidence summary
 
-1. Business and security requirements, acceptance criteria, and scope.
-2. Asset inventory, trust boundaries, threats, risks, and architecture decisions.
-3. Detailed network design, policy and routing matrices, and cost safeguards.
-4. Local lab preparation and deployment automation reviewed without activating Azure.
-5. Azure deployment and controlled validation **only after a separate readiness decision**.
-6. Evidence-backed test results, assurance report, residual risks, and portfolio review.
+| Test | Observed result |
+| --- | --- |
+| Azure APP → local test listener, TCP 5432 | 3/3 successful connections |
+| Azure APP → local target, TCP 4444 | Denied; firewall events ingested |
+| Firewall → Event Hub → Splunk | Events observed in Splunk on 3 Nov 2026 |
+| SEC-001 scheduled detection | Triggered alert observed at 05:10:01 (Arab Standard Time), 3 Nov 2026 |
+| Temporary NSG test-rule removal | Removed; Network Watcher reported `Deny` by `Deny-Private-Networks-Outbound` |
 
-## Validation principles
+These observations were collected during lab validation. The summary avoids including credentials, full Azure resource IDs, raw captures, or sensitive configuration.
 
-Test results will be labeled **Pass**, **Fail**, **Partial**, or **Not Tested**. A connection failure alone will not be treated as proof of firewall enforcement. Logs, screenshots, and outcomes will only be published if actually observed. Proposed architecture will remain clearly separate from implemented controls.
+## Security engineering decisions
 
-## Cost and readiness
+**Least privilege:** A dedicated service principal has receiver-only access scoped to the firewall log Event Hub.
 
-The initial Azure Pricing Calculator estimate was approximately **USD 32.44** for a mixed-duration configuration (including 24-hour compute/firewall usage and monthly disk/monitoring estimates). It is **not** a final or complete deployment cost. Azure free-trial activation is intentionally deferred until documentation, local preparation, scripts, and a pre-deployment review are complete.
+**Controlled traffic:** Firewall network rules and NSG policies restrict the tested network flows. The temporary test exception was removed after validation.
 
-## Next deliverable
+**Telemetry and detection:** Firewall diagnostics are collected centrally and converted into a scheduled Splunk detection, demonstrating an end-to-end control-validation workflow.
 
-Define traceable business/security requirements and measurable acceptance criteria in `01-business-security-requirements.md` before building the lab or activating Azure.
+**Transport protection:** The checkpoint storage account was configured to require HTTPS and TLS 1.2.
 
----
+## Source and deployment notes
 
-*Fictional enterprise scenario. This README describes planned work, not verified deployment or test outcomes.*
+The Bicep and supporting scripts are maintained as lab engineering artifacts. Some configuration and validation steps were performed separately from infrastructure templates. Deployment results should be verified against the live environment before reusing templates; no claim of fully automated, one-command deployment is made.
+
+## Evidence handling
+
+The public repository contains sanitized test outcomes. Original console outputs, screenshots, and operational logs should be reviewed and redacted before publication. Private keys, connection strings, SAS tokens, service-principal credentials, packet captures, and backup archives must not be committed.
+
+*Independent educational laboratory. Resource names and IP addresses shown are illustrative of the lab configuration, not production systems.*
