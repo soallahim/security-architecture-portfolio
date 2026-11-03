@@ -8,7 +8,7 @@ This directory retains **all 15 uploaded screenshots** for joint review. No imag
 
 | Evidence ID | Screenshot | Subject / intended supporting role | Review status |
 |---|---|---|---|
-| EV-01 | [EV-AZURE-01-Firewall-Logs.png](./EV-AZURE-01-Firewall-Logs.png) | Azure Firewall and detection: EV AZURE 01 Firewall Logs.png | Retained; visual/privacy review pending |
+| EV-01 | [EV-AZURE-01-Firewall-Logs.png](./EV-AZURE-01-Firewall-Logs.png) | Azure Firewall and detection: EV AZURE 01 Firewall Logs.png | Retained; owner privacy-reviewed; relevance assessment pending |
 | EV-02 | [EV-AZURE-02-SEC001-Triggered.png](./EV-AZURE-02-SEC001-Triggered.png) | Azure Firewall and detection: EV AZURE 02 SEC001 Triggered.png | Retained; visual/privacy review pending |
 | EV-03 | [EV-AZURE-03-NSG-Deny.png](./EV-AZURE-03-NSG-Deny.png) | Azure Firewall and detection: EV AZURE 03 NSG Deny.png | Retained; visual/privacy review pending |
 | EV-04 | [EV-NETWORK-01-OPNsense-Static-Route.png](./EV-NETWORK-01-OPNsense-Static-Route.png) | Hybrid routing and network controls: EV NETWORK 01 OPNsense Static Route.png | Retained; visual/privacy review pending |
@@ -36,7 +36,7 @@ This directory retains **all 15 uploaded screenshots** for joint review. No imag
 
 ## Publication review
 
-The screenshots are already present in this public repository. Before using them as cited evidence in the project narrative, inspect them for subscription and tenant IDs, usernames, credentials, tokens, internal hostnames and other unnecessary identifiers. **This register update does not redact the images.**
+The screenshots are already present in this public repository. The repository owner has confirmed that the images have been reviewed for sensitive information. The evidence register does not independently certify each image's evidentiary relevance, nor does it modify or redact any image.
 
 ## Related documentation
 
