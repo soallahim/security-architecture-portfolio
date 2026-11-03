@@ -1,5 +1,6 @@
 # 04 — Architecture Decision Records (ADRs)
 
+> **Document context (3 November 2026):** This document preserves the original design and planning baseline. Its planning-stage labels, proposed region, and hypothetical architecture are historical and do not describe the current deployed lab. For the verified implementation and test evidence, see [06 — Implemented Security Controls](./06-implemented-security-controls.md) and [07 — Security Validation Evidence](./07-security-validation-evidence.md).
 **Project:** Enterprise Azure Security Architecture & Monitoring  
 **Version:** 1.0 — design-stage decisions  
 **Implementation:** Not deployed | **Validation:** Not tested | **Azure trial:** Not activated
