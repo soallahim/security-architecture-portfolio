@@ -33,6 +33,10 @@ The Azure hybrid security architecture laboratory demonstrates a traceable seque
 
 All 15 screenshots are present in the evidence folder and indexed by their actual filenames; the repository owner has confirmed review for sensitive information; evidentiary relevance is assessed separately.
 
+## Cloud resource lifecycle closure
+
+After the laboratory tests, the operator deleted `rg-enterprise-security-lab`. Azure CLI returned `ResourceGroupNotFound` and `false` for the resource-group existence check. A subsequent subscription-wide resource listing showed only `NetworkWatcher_uaenorth` and `NetworkWatcher_japaneast` in `NetworkWatcherRG`. These observations support closure of the project's Azure resource footprint in the checked subscription; they do **not** certify final billing, zero historical charges, or the absence of charges outside that subscription.
+
 ## Traceability
 
 [Requirements](01-business-security-requirements.md) · [Threat Model](11-stride-threat-model.md) · [Traffic Matrix](09-security-traffic-flow-matrix.md) · [Findings](08-security-assessment-findings.md) · [Traceability Matrix](10-requirements-traceability-matrix.md) · [Validation](07-security-validation-evidence.md) · [Evidence](evidence/README.md)
