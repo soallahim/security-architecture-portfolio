@@ -1,5 +1,23 @@
 # 05 — Implementation and Validation Readiness Plan
 
+## Execution status and validation reconciliation — 3 November 2026
+
+This document remains the **original readiness and execution plan**. Its historical “No-go”, “Not Tested”, and “Immediate next action” statements below describe the earlier planning checkpoint and should not be interpreted as the present lab status.
+
+| Validation reference | Recorded execution outcome | Assurance scope |
+|---|---|---|
+| AZ-01 | 3/3 successful TCP connections from Azure application VM to local temporary HTTP listener on TCP/5432 | Network reachability, not database authentication |
+| AZ-02 | Denied TCP/4444 firewall events observed in Splunk | Selected denied traffic and log visibility |
+| AZ-03 | Scheduled SEC-001 detection triggered on 3 November 2026 | Detection execution, not independent incident count |
+| AZ-04 | Temporary NSG test rule removed; Network Watcher returned Deny | NSG decision evaluation, not packet capture |
+| AZ-05 | Azure Firewall diagnostic events ingested through Event Hubs into Splunk | Observed pipeline, not resilience testing |
+
+**Architecture acceptance for portfolio purposes:** The documented lab outcomes support a limited security architecture case study. This is not an authorization to deploy further Azure resources or a claim of production readiness. The evidence files are now present in [evidence/](evidence/README.md); visual/privacy review of each uploaded screenshot is still outstanding.
+
+For the current technical outcome, use [06](06-implemented-security-controls.md), [07](07-security-validation-evidence.md), and [13](13-security-assurance-report.md), rather than the predeployment gate status retained below.
+
+---
+
 > **Document context (3 November 2026):** This document preserves the original design and planning baseline. Its planning-stage labels, proposed region, and hypothetical architecture are historical and do not describe the current deployed lab. For the verified implementation and test evidence, see [06 — Implemented Security Controls](./06-implemented-security-controls.md) and [07 — Security Validation Evidence](./07-security-validation-evidence.md).
 **Project:** Enterprise Azure Security Architecture & Monitoring  
 **Version:** 1.0 — offline preparation plan  
