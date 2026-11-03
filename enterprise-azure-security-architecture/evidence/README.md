@@ -9,20 +9,20 @@ This directory retains **all 15 uploaded screenshots** for joint review. No imag
 | Evidence ID | Screenshot | Subject / intended supporting role | Review status |
 |---|---|---|---|
 | EV-01 | [EV-AZURE-01-Firewall-Logs.png](./EV-AZURE-01-Firewall-Logs.png) | Azure Firewall and detection: EV AZURE 01 Firewall Logs.png | Retained; owner privacy-reviewed; relevance assessment pending |
-| EV-02 | [EV-AZURE-02-SEC001-Triggered.png](./EV-AZURE-02-SEC001-Triggered.png) | Azure Firewall and detection: EV AZURE 02 SEC001 Triggered.png | Retained; visual/privacy review pending |
-| EV-03 | [EV-AZURE-03-NSG-Deny.png](./EV-AZURE-03-NSG-Deny.png) | Azure Firewall and detection: EV AZURE 03 NSG Deny.png | Retained; visual/privacy review pending |
-| EV-04 | [EV-NETWORK-01-OPNsense-Static-Route.png](./EV-NETWORK-01-OPNsense-Static-Route.png) | Hybrid routing and network controls: EV NETWORK 01 OPNsense Static Route.png | Retained; visual/privacy review pending |
-| EV-05 | [EV-NETWORK-02-OPNsense-Kali-to-DB-Rule.png](./EV-NETWORK-02-OPNsense-Kali-to-DB-Rule.png) | Hybrid routing and network controls: EV NETWORK 02 OPNsense Kali to DB Rule.png | Retained; visual/privacy review pending |
-| EV-06 | [EV-NETWORK-03-UDR-Associations-Verified.png](./EV-NETWORK-03-UDR-Associations-Verified.png) | Hybrid routing and network controls: EV NETWORK 03 UDR Associations Verified.png | Retained; visual/privacy review pending |
-| EV-07 | [EV-NETWORK-04-AZURE-APP-Effective-Routes.png](./EV-NETWORK-04-AZURE-APP-Effective-Routes.png) | Hybrid routing and network controls: EV NETWORK 04 AZURE APP Effective Routes.png | Retained; visual/privacy review pending |
-| EV-08 | [EV-NETWORK-05-WIREGUARD-RouteTable-Association.png](./EV-NETWORK-05-WIREGUARD-RouteTable-Association.png) | Hybrid routing and network controls: EV NETWORK 05 WIREGUARD RouteTable Association.png | Retained; visual/privacy review pending |
-| EV-09 | [EV-MGMT-01-Unauthorized-HTTPS-Blocked.png](./EV-MGMT-01-Unauthorized-HTTPS-Blocked.png) | Management access: EV MGMT 01 Unauthorized HTTPS Blocked.png | Retained; visual/privacy review pending |
-| EV-10 | [EV-SPLUNK-01-Index-Write-Read.png](./EV-SPLUNK-01-Index-Write-Read.png) | Splunk monitoring and integration: EV SPLUNK 01 Index Write Read.png | Retained; visual/privacy review pending |
-| EV-11 | [EV-SPLUNK-02-OPNsense-Syslog-Received.png](./EV-SPLUNK-02-OPNsense-Syslog-Received.png) | Splunk monitoring and integration: EV SPLUNK 02 OPNsense Syslog Received.png | Retained; visual/privacy review pending |
-| EV-12 | [EV-SPLUNK-03-Firewall-Logs-Ingested.png](./EV-SPLUNK-03-Firewall-Logs-Ingested.png) | Splunk monitoring and integration: EV SPLUNK 03 Firewall Logs Ingested.png | Retained; visual/privacy review pending |
-| EV-13 | [EV-SPLUNK-04-Unauthorized-Management-Blocked.png](./EV-SPLUNK-04-Unauthorized-Management-Blocked.png) | Splunk monitoring and integration: EV SPLUNK 04 Unauthorized Management Blocked.png | Retained; visual/privacy review pending |
-| EV-14 | [EV-SPLUNK-05-Syslog-After-WiFi-Block.png](./EV-SPLUNK-05-Syslog-After-WiFi-Block.png) | Splunk monitoring and integration: EV SPLUNK 05 Syslog After WiFi Block.png | Retained; visual/privacy review pending |
-| EV-15 | [EV-SPLUNK-06-eventhub-input-initialization.png](./EV-SPLUNK-06-eventhub-input-initialization.png) | Splunk monitoring and integration: EV SPLUNK 06 eventhub input initialization.png | Retained; visual/privacy review pending |
+| EV-02 | [EV-AZURE-02-SEC001-Triggered.png](./EV-AZURE-02-SEC001-Triggered.png) | Azure Firewall and detection: EV AZURE 02 SEC001 Triggered.png | Retained; owner privacy-reviewed; relevance pending |
+| EV-03 | [EV-AZURE-03-NSG-Deny.png](./EV-AZURE-03-NSG-Deny.png) | Azure Firewall and detection: EV AZURE 03 NSG Deny.png | Retained; owner privacy-reviewed; relevance pending |
+| EV-04 | [EV-NETWORK-01-OPNsense-Static-Route.png](./EV-NETWORK-01-OPNsense-Static-Route.png) | Hybrid routing and network controls: EV NETWORK 01 OPNsense Static Route.png | Retained; owner privacy-reviewed; relevance pending |
+| EV-05 | [EV-NETWORK-02-OPNsense-Kali-to-DB-Rule.png](./EV-NETWORK-02-OPNsense-Kali-to-DB-Rule.png) | Hybrid routing and network controls: EV NETWORK 02 OPNsense Kali to DB Rule.png | Retained; owner privacy-reviewed; relevance pending |
+| EV-06 | [EV-NETWORK-03-UDR-Associations-Verified.png](./EV-NETWORK-03-UDR-Associations-Verified.png) | Hybrid routing and network controls: EV NETWORK 03 UDR Associations Verified.png | Retained; owner privacy-reviewed; relevance pending |
+| EV-07 | [EV-NETWORK-04-AZURE-APP-Effective-Routes.png](./EV-NETWORK-04-AZURE-APP-Effective-Routes.png) | Hybrid routing and network controls: EV NETWORK 04 AZURE APP Effective Routes.png | Retained; owner privacy-reviewed; relevance pending |
+| EV-08 | [EV-NETWORK-05-WIREGUARD-RouteTable-Association.png](./EV-NETWORK-05-WIREGUARD-RouteTable-Association.png) | Hybrid routing and network controls: EV NETWORK 05 WIREGUARD RouteTable Association.png | Retained; owner privacy-reviewed; relevance pending |
+| EV-09 | [EV-MGMT-01-Unauthorized-HTTPS-Blocked.png](./EV-MGMT-01-Unauthorized-HTTPS-Blocked.png) | Management access: EV MGMT 01 Unauthorized HTTPS Blocked.png | Retained; owner privacy-reviewed; relevance pending |
+| EV-10 | [EV-SPLUNK-01-Index-Write-Read.png](./EV-SPLUNK-01-Index-Write-Read.png) | Splunk monitoring and integration: EV SPLUNK 01 Index Write Read.png | Retained; owner privacy-reviewed; relevance pending |
+| EV-11 | [EV-SPLUNK-02-OPNsense-Syslog-Received.png](./EV-SPLUNK-02-OPNsense-Syslog-Received.png) | Splunk monitoring and integration: EV SPLUNK 02 OPNsense Syslog Received.png | Retained; owner privacy-reviewed; relevance pending |
+| EV-12 | [EV-SPLUNK-03-Firewall-Logs-Ingested.png](./EV-SPLUNK-03-Firewall-Logs-Ingested.png) | Splunk monitoring and integration: EV SPLUNK 03 Firewall Logs Ingested.png | Retained; owner privacy-reviewed; relevance pending |
+| EV-13 | [EV-SPLUNK-04-Unauthorized-Management-Blocked.png](./EV-SPLUNK-04-Unauthorized-Management-Blocked.png) | Splunk monitoring and integration: EV SPLUNK 04 Unauthorized Management Blocked.png | Retained; owner privacy-reviewed; relevance pending |
+| EV-14 | [EV-SPLUNK-05-Syslog-After-WiFi-Block.png](./EV-SPLUNK-05-Syslog-After-WiFi-Block.png) | Splunk monitoring and integration: EV SPLUNK 05 Syslog After WiFi Block.png | Retained; owner privacy-reviewed; relevance pending |
+| EV-15 | [EV-SPLUNK-06-eventhub-input-initialization.png](./EV-SPLUNK-06-eventhub-input-initialization.png) | Splunk monitoring and integration: EV SPLUNK 06 eventhub input initialization.png | Retained; owner privacy-reviewed; relevance pending |
 
 ## Evidence interpretation
 
