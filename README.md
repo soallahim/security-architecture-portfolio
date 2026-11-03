@@ -1,6 +1,6 @@
 # Security Architecture Portfolio
 
-**Cybersecurity Specialist | Security Architecture | Network Security | Security Assurance**
+**Cybersecurity Consultant | Security Architecture | Network Security | Security Assurance**
 
 A portfolio of practical cybersecurity projects focused on secure architecture design, network security, risk assessment, and technical security validation.
 
@@ -8,9 +8,21 @@ My approach combines **security requirements, risk-based design decisions, hands
 
 ---
 
-## Featured Project
+## Featured Projects
 
-### 01. Enterprise Network Segmentation & Security Architecture
+### 01. Enterprise Security Architecture — Microsoft Azure & Splunk Enterprise
+
+**Hybrid Security Architecture | Azure Firewall | Event Hubs | Splunk Enterprise | Detection Engineering**
+
+Implemented and validated a hybrid Azure-to-local security laboratory, including routed connectivity, Azure Firewall enforcement, centralized firewall telemetry through Event Hubs, and a scheduled Splunk detection alert.
+
+**Validated outcomes:** 3/3 successful authorized test connections; denied-flow telemetry ingested into Splunk; scheduled alert **SEC-001** triggered; temporary test rule removed and default-deny behavior verified.
+
+**[Explore the Azure & Splunk Security Architecture Project](./azure-splunk-security-architecture/README.md)**
+
+---
+
+### 02. Enterprise Network Segmentation & Security Architecture
 
 **Security Architecture | Network Segmentation | Firewall Security | Risk Assessment**
 
