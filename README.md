@@ -18,7 +18,7 @@ Implemented and validated a hybrid Azure-to-local security laboratory, including
 
 **Validated outcomes:** 3/3 successful authorized test connections; denied-flow telemetry ingested into Splunk; scheduled alert **SEC-001** triggered; temporary test rule removed and default-deny behavior verified.
 
-**[Explore the Azure & Splunk Security Architecture Project](./azure-splunk-security-architecture/README.md)**
+**[Explore the Azure & Splunk Security Architecture Project](./enterprise-azure-security-architecture/README.md)**
 
 ---
 
