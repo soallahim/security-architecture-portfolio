@@ -64,7 +64,7 @@ Each ADR identifies the problem, decision, alternatives, trade-offs and evidence
 
 **Trade-off:** Short-lived testing limits repeatability without careful evidence retention.
 
-**Outcome:** Planning and rationale documented. **Status:** Final billing/resource cleanup evidence was not supplied; cost compliance and teardown must not be described as verified.
+**Outcome:** Planning and rationale documented. **Status:** Project resource-group deletion was confirmed by Azure CLI (`az group exists` returned `false`); a subsequent subscription resource list showed only two Network Watcher resources. Final billing and historical budget compliance remain unverified.
 
 ## ADR-06 — Test-service realism and evidence integrity
 
@@ -86,7 +86,7 @@ Each ADR identifies the problem, decision, alternatives, trade-offs and evidence
 | ADR-02 | SEC-05 | R-03 | AZ-01; hybrid routing screenshots | Implemented; peer-security assurance partial |
 | ADR-03 | SEC-01, SEC-04, SEC-07 | R-01, R-02 | AZ-04; UDR/effective-route screenshots | Implemented; selected NSG decision validated |
 | ADR-04 | SEC-08, SEC-09 | R-05, R-09 | AZ-03, AZ-05; Splunk screenshots | Implemented; observed ingestion/detection validated |
-| ADR-05 | BUS-05, SEC-10 | R-08 | Planning record | Final cost/teardown not verified |
+| ADR-05 | BUS-05, SEC-10 | R-08 | Planning record | Project resource cleanup confirmed; final billing unverified |
 | ADR-06 | SEC-02 | R-01 | AZ-01 | Test-service representation verified |
 
 ## Architecture review conclusion
