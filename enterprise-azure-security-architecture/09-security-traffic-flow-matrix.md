@@ -6,11 +6,11 @@ This matrix describes observed laboratory communication and telemetry flows. A n
 
 | Flow ID | Source | Destination | Service / channel | Control point | Expected / observed outcome | Evidence |
 |---|---|---|---|---|---|---|
-| TF-01 | Azure application VM `10.50.10.4` | Local HTTP test listener `192.168.20.10` | TCP/5432 | Azure Firewall Policy, hybrid routing | Allowed; **3/3** connectivity checks succeeded | AZ-01; EV-01 |
-| TF-02 | Azure application VM / tested source | Local test destination | TCP/4444 | Azure Firewall Policy / tested network controls | Denied; events ingested into Splunk | AZ-02; EV-01 |
-| TF-03 | Azure Firewall diagnostics | Azure Event Hubs | Diagnostic event delivery | Azure diagnostic settings and Event Hub | Events subsequently observed in Splunk | AZ-05; EV-01 |
-| TF-04 | Azure Event Hub | Splunk Enterprise | Event Hub ingestion via Microsoft Cloud Services add-on | Event Hub-scoped Data Receiver role | Firewall events indexed in `azure_security` | AZ-05; EV-01 |
-| TF-05 | Azure NSG policy evaluation | Evaluated private-network outbound flow | IP flow verification | NSG `Deny-Private-Networks-Outbound` | **Deny** reported after temporary rule removal | AZ-04; EV-03 |
+| TF-01 | Azure application VM `10.50.10.4` | Local HTTP test listener `192.168.20.10` | TCP/5432 | Azure Firewall Policy, hybrid routing | Allowed; **3/3** connectivity checks succeeded | AZ-01; [Firewall logs](./evidence/EV-AZURE-01-Firewall-Logs.png) |
+| TF-02 | Azure application VM / tested source | Local test destination | TCP/4444 | Azure Firewall Policy / tested network controls | Denied; events ingested into Splunk | AZ-02; [Firewall logs](./evidence/EV-AZURE-01-Firewall-Logs.png) |
+| TF-03 | Azure Firewall diagnostics | Azure Event Hubs | Diagnostic event delivery | Azure diagnostic settings and Event Hub | Events subsequently observed in Splunk | AZ-05; [Firewall logs](./evidence/EV-AZURE-01-Firewall-Logs.png) |
+| TF-04 | Azure Event Hub | Splunk Enterprise | Event Hub ingestion via Microsoft Cloud Services add-on | Event Hub-scoped Data Receiver role | Firewall events indexed in `azure_security` | AZ-05; [Firewall logs](./evidence/EV-AZURE-01-Firewall-Logs.png) |
+| TF-05 | Azure NSG policy evaluation | Evaluated private-network outbound flow | IP flow verification | NSG `Deny-Private-Networks-Outbound` | **Deny** reported after temporary rule removal | AZ-04; [NSG decision](./evidence/EV-AZURE-03-NSG-Deny.png) |
 
 ## Trust boundaries
 
