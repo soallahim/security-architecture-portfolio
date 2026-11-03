@@ -16,7 +16,7 @@ My approach combines **security requirements, risk-based design decisions, hands
 
 Implemented and validated a hybrid Azure-to-local security laboratory, including routed connectivity, Azure Firewall enforcement, centralized firewall telemetry through Event Hubs, and a scheduled Splunk detection alert.
 
-**Validated outcomes:** 3/3 successful authorized test connections; denied-flow telemetry ingested into Splunk; scheduled alert **SEC-001** triggered; temporary test rule removed and default-deny behavior verified.
+**Validated outcomes:** 3/3 successful authorized test connections; denied-flow telemetry ingested into Splunk; scheduled alert **SEC-001** triggered; temporary test rule removed and a selected NSG **Deny** decision verified using Network Watcher (not an end-to-end packet test).
 
 **[Explore the Azure & Splunk Security Architecture Project](./enterprise-azure-security-architecture/README.md)**
 
@@ -37,7 +37,7 @@ The project covers security requirements, architecture assessment, traffic flow 
 - Executed **5 network connectivity validation scenarios**, with 4 passing and 1 partially evidenced.
 - Identified unintended access to the firewall management interface caused by an automatic anti-lockout rule.
 - Remediated the issue and verified that authorized administrative access remained available.
-- Developed **10 structured security architecture documents**, including a risk register, Architecture Decision Records (ADRs), and a Requirements Traceability Matrix (RTM).
+- Developed **13 structured security architecture documents**, including a risk register, Architecture Decision Records (ADRs), and a Requirements Traceability Matrix (RTM).
 
 ### Security Architecture Deliverables
 
@@ -67,13 +67,15 @@ The project covers security requirements, architecture assessment, traffic flow 
 
 ## Technologies
 
-OPNsense · Oracle VirtualBox · Debian Linux · Kali Linux · TCP/IP · Firewall Logging
+**Cloud and security monitoring:** Microsoft Azure · Azure Firewall · Azure Event Hubs · WireGuard · Splunk Enterprise
+
+**Local network security laboratory:** OPNsense · Oracle VirtualBox · Debian Linux · Kali Linux · TCP/IP · Firewall Logging
 
 ## About This Portfolio
 
 This portfolio focuses on demonstrating practical cybersecurity architecture skills through documented design decisions, technical implementation, and verifiable security outcomes.
 
-The featured project includes both a **hands-on laboratory** and a **separate conceptual enterprise target architecture**. Proposed enterprise controls are clearly distinguished from implemented and tested laboratory controls.
+The portfolio contains **two distinct case studies**: an Azure-to-local hybrid security architecture with SIEM integration, and a local network segmentation laboratory with a separate conceptual enterprise target architecture. Proposed enterprise controls are distinguished from implemented and tested laboratory controls. The Azure project's resource group has been deleted following validation; its documentation and screenshots remain available as historical evidence. Final billing reconciliation is pending.
 
 ---
 
