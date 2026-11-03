@@ -1,160 +1,86 @@
-# 03 — Target Security Architecture
+# 03 — Target and Implemented Security Architecture
 
-## Implemented laboratory architecture — 3 November 2026
+**Architecture baseline:** Current laboratory implementation, 3 November 2026 | **Region:** Japan East | **View:** Logical security architecture, not a packet capture.
 
-The sections below record the **original proposed target design**. In particular, any earlier region, route, or “not deployed” statements are historical planning assumptions. The verified lab was implemented in **Japan East**.
+## 1. Architecture rationale
+
+The architecture separates four concerns: **hybrid transport**, **network policy enforcement**, **security-event delivery**, and **SIEM detection**. A working tunnel is not treated as an authorization mechanism, and event ingestion is not equated with comprehensive detection coverage.
+
+## 2. Implemented logical topology
 
 ```mermaid
 flowchart LR
-    subgraph LOCAL["Local segmented laboratory"]
-      TEST["HTTP test listener\n192.168.20.10:5432"]
-      OPN["OPNsense / local routing"]
-      SPL["Splunk Enterprise\nazure_security"]
-    end
-    subgraph AZURE["Azure — Japan East / 10.50.0.0/16"]
+    subgraph AZ["Azure — Japan East, VNet 10.50.0.0/16"]
       APP["Application VM\n10.50.10.4"]
       FW["Azure Firewall\n10.50.0.4"]
       WG["WireGuard gateway"]
-      EH["Azure Event Hubs"]
+      EH["Event Hubs\nazure-firewall-logs"]
     end
-    APP -->|"Selected tested flows"| FW
-    FW -->|"Hybrid routing path"| WG
-    WG <-->|"WireGuard tunnel"| OPN
-    OPN --> TEST
-    FW -->|"Diagnostic events"| EH
-    EH -->|"Splunk add-on ingestion"| SPL
+    subgraph LOCAL["Local segmented laboratory"]
+      OP["OPNsense / local routing"]
+      DB["Temporary HTTP test listener\n192.168.20.10:5432"]
+      SP["Splunk Enterprise\nindex: azure_security"]
+    end
+    APP -->|"Scoped routed traffic"| FW
+    FW -->|"Hybrid path"| WG
+    WG <-->|"WireGuard"| OP
+    OP --> DB
+    FW -->|"Diagnostics"| EH
+    EH -->|"Splunk add-on"| SP
+    SP --> DET["SEC-001 scheduled detection"]
 ```
 
-**Diagram interpretation:** This is a logical view of the validated connectivity and telemetry architecture. It is not a complete packet-level topology or proof that every tested flow traversed every depicted hop; actual forwarding and inspection depend on the effective routes and policies.
+**Diagram caveat:** This is a logical control-and-telemetry model. The exact next hop and inspection path for each packet must be evaluated against effective routes, NAT and firewall policy; the diagram does not independently prove universal firewall traversal.
 
-**Enforcement and visibility:** Azure Firewall Policy and NSG rules address different policy scopes. WireGuard provides hybrid transport, not unrestricted authorization. Azure Firewall diagnostic events were consumed through Event Hubs into Splunk, where SEC-001 triggered.
+## 3. Network zones and trust boundaries
 
-**Verified tests:** AZ-01 (3/3 TCP/5432 HTTP-listener connections), AZ-02 (denied TCP/4444 events), AZ-03 (SEC-001 trigger), AZ-04 (NSG rule evaluation returned Deny), and AZ-05 (Azure Firewall telemetry ingestion). See [traffic flow matrix](09-security-traffic-flow-matrix.md) and [evidence register](evidence/README.md).
-
----
-
-> **Document context (3 November 2026):** This document preserves the original design and planning baseline. Its planning-stage labels, proposed region, and hypothetical architecture are historical and do not describe the current deployed lab. For the verified implementation and test evidence, see [06 — Implemented Security Controls](./06-implemented-security-controls.md) and [07 — Security Validation Evidence](./07-security-validation-evidence.md).
-**Status:** Proposed; not deployed or tested. **Region:** UAE North (subject to availability).
-
-Related documents: [Requirements](./01-business-security-requirements.md) and [Threat Model](./02-threat-model-risk-assessment.md).
-
-## Purpose
-
-Demonstrate least-privilege segmentation between Azure application and database workloads, controlled local administration through an outbound-initiated WireGuard tunnel, and security-event visibility in local Splunk. All claims remain design intentions until supported by actual configuration and test evidence.
-
-## Proposed topology
-
-```mermaid
-flowchart TB
-  subgraph Local["Local lab 192.168.50.0/24"]
-    Admin["Authorized admin host (TBD)"]
-    OP["OPNsense / WireGuard client"]
-    SP["Splunk Enterprise"]
-    Admin --> OP
-  end
-  CG["CGNAT / Internet"]
-  subgraph Azure["Azure VNet 10.50.0.0/16"]
-    WG["WireGuard Linux gateway 10.50.1.4"]
-    FW["Azure Firewall Basic (private IP TBD)"]
-    APP["APP Linux VM 10.50.10.4"]
-    DB["DB Linux VM 10.50.20.4"]
-    FW --- APP
-    FW --- DB
-    WG --- FW
-  end
-  OP <-->|"Outbound-initiated WireGuard UDP"| CG
-  CG <-->|"Azure public VPN endpoint"| WG
-  FW -. "Diagnostics" .-> EH["Azure Monitor / Event Hubs (planned)"]
-  EH -. "Ingestion method TBD" .-> SP
-```
-
-Lines represent intended connections, not proof of traffic permissions or firewall traversal.
-
-## Network and address plan
-
-| Zone | Subnet | Endpoint |
+| Boundary | Objective | Enforcement / review |
 |---|---|---|
-| AzureFirewallSubnet | 10.50.0.0/26 | Firewall private IP assigned by Azure |
-| AzureFirewallManagementSubnet | 10.50.0.64/26 | Dedicated firewall management interface |
-| VPN | 10.50.1.0/27 | WireGuard VM 10.50.1.4 |
-| APP | 10.50.10.0/24 | APP VM 10.50.10.4 |
-| DB | 10.50.20.0/24 | DB VM 10.50.20.4 |
-| WireGuard tunnel | 172.27.50.0/24 | Azure .1, local .2 |
-| Local lab | 192.168.50.0/24 | Admin host TBD |
+| Azure application subnet → Azure security network | Apply selected service restrictions | Azure Firewall Policy; NSG; UDR review |
+| Azure → local segmented lab | Maintain controlled hybrid reachability | WireGuard transport; OPNsense and route review |
+| Local management → cloud workload | Limit privileged access | Source-scoped policies; management evidence reviewed separately |
+| Azure Firewall → Event Hubs | Deliver security decisions | Azure Firewall diagnostics |
+| Event Hubs → Splunk | Consume logs with scoped privilege | Event Hub-scoped Data Receiver role and Splunk add-on |
 
-All addresses are proposed. Azure Firewall Basic public/management IP requirements and total billable public IP count must be verified.
+The local test endpoint on TCP/5432 was an **HTTP listener**. It is deliberately not described as a deployed database or a successful database authentication flow.
 
-## Trust boundaries
+## 4. Routing and traffic intent
 
-- TB-01 Internet to Azure WireGuard endpoint: authenticate peers and restrict exposed UDP.
-- TB-02 Local management to WireGuard: allow only approved host and routed prefixes.
-- TB-03 VPN gateway to Azure workloads: force selected flows through firewall, verify forwarding and return routes.
-- TB-04 APP to DB: least-privilege service rule, independent NSG and host controls.
-- TB-05 Azure diagnostic events to local Splunk: authenticated transport, data integrity, monitoring of missing events.
-
-## Proposed UDR matrix
-
-| Route table | Attached subnet | Destination | Virtual appliance next hop |
+| Path | Expected policy | Recorded evidence | Limit |
 |---|---|---|---|
-| RT-APP | APP | 10.50.20.0/24 | Azure Firewall private IP |
-| RT-APP | APP | 192.168.50.0/24 | Azure Firewall private IP |
-| RT-DB | DB | 10.50.10.0/24 | Azure Firewall private IP |
-| RT-DB | DB | 192.168.50.0/24 | Azure Firewall private IP |
-| RT-WG | VPN | 10.50.10.0/24 | Azure Firewall private IP |
-| RT-WG | VPN | 10.50.20.0/24 | Azure Firewall private IP |
-| RT-FW | AzureFirewallSubnet | 192.168.50.0/24 | WireGuard VM 10.50.1.4 |
-| RT-FW | AzureFirewallSubnet | 172.27.50.0/24 (only if required) | WireGuard VM 10.50.1.4 |
+| APP `10.50.10.4` → local listener `192.168.20.10:5432` | Permit approved test flow | AZ-01: 3/3 connections | Selected TCP reachability only |
+| Selected Azure → local TCP/4444 | Deny unauthorized service | AZ-02: denied events in Splunk | No claim of every port blocked |
+| Private-network outbound NSG evaluation | Deny under restrictive NSG rule | AZ-04: Network Watcher returned Deny | NSG decision, not end-to-end traversal |
+| Firewall diagnostics → Event Hubs → Splunk | Deliver and index security events | AZ-05: events observed in `azure_security` | No resilience test |
+| Splunk scheduled correlation | Alert on repeated denials | AZ-03: SEC-001 triggered | Alert executions ≠ distinct incidents |
 
-Do not attach RT-FW to AzureFirewallManagementSubnet. Validate Azure Firewall SKU-specific routing constraints before deployment. An Azure system route can bypass inspection unless the relevant effective UDR is present.
+For test-source/destination details, see [09 — Traffic Flow Matrix](09-security-traffic-flow-matrix.md).
 
-## Bidirectional packet walks
+## 5. Security policy design
 
-**PATH-01: Local admin to APP SSH (intended allow).** The authorized local host sends TCP 22 through OPNsense and its client-initiated WireGuard tunnel. The Azure gateway decapsulates and preserves source 192.168.50.x. RT-WG sends traffic to Azure Firewall, whose policy allows the specified source to APP. APP replies through RT-APP to Azure Firewall, then RT-FW toward the WireGuard gateway and local host. Evidence must include effective routes, handshake, SSH success, and matching firewall Allow log.
+**Default architecture principle:** explicitly approve necessary source/destination/port combinations and avoid broad hybrid access. Azure Firewall, NSGs, and local firewall policy are complementary; their scopes and evaluation paths are not interchangeable.
 
-**PATH-02: Local to DB SSH (intended deny).** The same inspected path reaches the Azure Firewall deny policy. A failed SSH connection alone does not prove Azure Firewall enforcement; a correlated Deny event and route/policy inspection are required.
+**Validation-time change control:** A temporary NSG rule used during testing was removed, and the selected outbound flow was reevaluated. Network Watcher returned Deny under `Deny-Private-Networks-Outbound`. This demonstrates cleanup and rule evaluation, **not** a confirmed pre-existing vulnerability.
 
-**PATH-03: APP to DB TCP 5432 (intended allow).** APP routes to Azure Firewall, which permits a temporary TCP test listener on DB; return traffic follows DB's UDR. This does not imply PostgreSQL is installed.
+## 6. Telemetry and detection architecture
 
-**PATH-04: APP to DB SSH (intended deny).** Firewall blocks an unapproved new session. Correlated Deny log and effective route required.
+Azure Firewall diagnostics (`AZFWNetworkRule`, `AZFWApplicationRule`, `AZFWNatRule`, `AZFWThreatIntel`) were sent through Event Hubs to Splunk Enterprise. The recorded ingestion used the Microsoft Cloud Services add-on and the `azure_security` index. SEC-001 was a scheduled detection for repeated denied connections; its trigger confirms an observed detection path at the test time.
 
-All paths: **Not Tested**. WireGuard AllowedIPs, OPNsense routes, Linux IP forwarding, Azure NIC IP forwarding, and any NAT must be explicitly configured and inspected. If traffic is SNATed, source-scoped rules and return routes require redesign.
+**Identity design:** The ingestion principal used an Azure Event Hubs Data Receiver assignment scoped to the relevant Event Hub, rather than broad administrative access. **Checkpoint storage design:** HTTPS-only, TLS 1.2, anonymous blob access disabled. These are configuration observations, not adversarial validation.
 
-## Firewall policy intent
+## 7. Architecture decisions and trade-offs
 
-| Policy | Source | Destination | Port | Decision |
-|---|---|---|---|---|
-| FW-01 | APP | DB | TCP 5432 | Allow |
-| FW-02 | APP | DB | Other new sessions | Deny |
-| FW-03 | DB | APP | Unapproved new sessions | Deny |
-| FW-04 | Approved local admin host | APP | TCP 22 | Allow |
-| FW-05 | Local management | DB | TCP 22 | Deny |
-| FW-06 | Internet | APP/DB management | TCP 22 | No direct exposure |
-| FW-07 | All other traffic | All | Unapproved | Default deny where policy applies |
+| Choice | Benefit | Trade-off | ADR |
+|---|---|---|---|
+| WireGuard for hybrid link | Practical outbound-initiated connection under local CGNAT | Peer/key and forwarding governance remain important | ADR-02 |
+| Azure Firewall plus NSG | Central policy with additional subnet-level restriction | Requires route and rule-order verification | ADR-01, ADR-03 |
+| Event Hubs to Splunk | Decoupled telemetry delivery and local analysis | Adds event transport and ingestion dependencies | ADR-04 |
+| Temporary test listener | Repeatable connectivity assertion without a database deployment | Cannot establish database authorization | ADR-06 |
 
-Firewall is stateful. NSGs or host firewalls may deny packets before they reach Azure Firewall; therefore missing Azure Firewall logs cannot be treated as proof of Azure Firewall enforcement. Explicit Internet egress routing, DNS, and service dependencies remain to be designed.
+## 8. Architecture assurance position
 
-## Monitoring architecture
+**Supported:** Selected hybrid reachability, firewall-deny visibility, Event Hub ingestion, SEC-001 trigger and NSG Deny decision.
 
-```mermaid
-flowchart LR
-  FW["Azure Firewall"] --> AM["Azure Monitor diagnostic settings"]
-  AM --> EH["Azure Event Hubs"]
-  EH -. "Connector and auth TBD" .-> SPL["Local Splunk Enterprise"]
-```
+**Not established:** Complete symmetric inspection, every APP/DB segmentation requirement, full management policy, production availability, or cost/teardown closure. This document replaces earlier proposal-stage topology statements as the **current architectural narrative** without changing historical test identifiers.
 
-Ingestion feasibility, consumer authentication, transport, event categories, and costs remain open. The local Splunk consumer may initiate outbound connections, but that is not verified in this project.
-
-## Assurance and deployment blockers
-
-| ID | Blocker | Required review |
-|---|---|---|
-| ARCH-01 | Azure Firewall Basic and management/public IP prerequisites | Official SKU/region and subscription checks |
-| ARCH-02 | UDR support, effective routes and symmetry | Bidirectional route validation |
-| ARCH-03 | WireGuard AllowedIPs, forwarding, NAT, local firewall | Offline configuration and packet-path review |
-| ARCH-04 | Event Hubs to local Splunk ingestion | Connector and authentication feasibility |
-| ARCH-05 | Management host IP, rule priorities, NSG/host precedence | Detailed implementation plan |
-| ARCH-06 | Trial eligibility, cost ceiling SAR 150, teardown | Cost model and cleanup checklist |
-
-Planned evidence: NET-01/02/03, VPN-01/02/03, ROUTE-01, LOG-01 and GOV-01 as defined in requirements. Every test remains **Not Tested**.
-
-**Architect review:** Design baseline documented, but **NOT approved for Azure deployment**. Next create ADRs and resolve the routing, ingestion and cost blockers before cloud activation.
+[Requirements](01-business-security-requirements.md) · [Risk Assessment](02-threat-model-risk-assessment.md) · [ADRs](04-architecture-decision-records.md) · [Validation](07-security-validation-evidence.md) · [Evidence](evidence/README.md).
