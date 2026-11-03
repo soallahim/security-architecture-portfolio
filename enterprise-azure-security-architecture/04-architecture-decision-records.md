@@ -1,5 +1,24 @@
 # 04 — Architecture Decision Records (ADRs)
 
+## Decision outcome review — 3 November 2026
+
+The ADRs below preserve the original **decision rationale, alternatives, and predeployment verification gates**. Their original “not deployed” conclusions are historical, not the current status of the laboratory.
+
+| Original ADR | Observed architecture outcome | Assurance boundary |
+|---|---|---|
+| ADR-01 — Central Azure network enforcement | Azure Firewall Policy applied to selected hybrid test flows; firewall telemetry received in Splunk | Tested paths only; not universal inspection assurance |
+| ADR-02 — Hybrid connectivity under CGNAT | WireGuard-based Azure-to-local hybrid path used in the lab | Does not imply every tunnel peer or route was adversarially tested |
+| ADR-03 — Route-based inspection and defense in depth | UDR associations/effective routes recorded; NSG Deny evaluated after removal of temporary exception | NSG rule evaluation is distinct from end-to-end forwarding proof |
+| ADR-04 — Azure telemetry in local Splunk | Azure Firewall diagnostics → Event Hubs → Splunk; SEC-001 triggered | Observed pipeline, not continuous availability assurance |
+| ADR-05 — Cost and teardown governance | Predeployment cost/cleanup rationale retained | No fresh billing or teardown certification asserted |
+| ADR-06 — Test service realism | Temporary HTTP listener on TCP/5432 used | No PostgreSQL or database authorization claim |
+
+**Architectural decision:** Preserve separate layers for hybrid transport, network enforcement, telemetry delivery, and SIEM detection. A working tunnel alone does not establish least privilege; an alert alone does not prove incident response effectiveness.
+
+See [implemented controls](06-implemented-security-controls.md), [validation](07-security-validation-evidence.md), and [assurance report](13-security-assurance-report.md).
+
+---
+
 > **Document context (3 November 2026):** This document preserves the original design and planning baseline. Its planning-stage labels, proposed region, and hypothetical architecture are historical and do not describe the current deployed lab. For the verified implementation and test evidence, see [06 — Implemented Security Controls](./06-implemented-security-controls.md) and [07 — Security Validation Evidence](./07-security-validation-evidence.md).
 **Project:** Enterprise Azure Security Architecture & Monitoring  
 **Version:** 1.0 — design-stage decisions  
