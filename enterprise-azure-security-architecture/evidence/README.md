@@ -2,40 +2,45 @@
 
 ## Overview
 
-This directory contains selected, sanitized screenshots supporting the Azure hybrid security architecture and Splunk Enterprise validation case study. Upload only reviewed screenshots. This is an evidence register, not a deployment guide.
+This directory retains **all 15 uploaded screenshots** for joint review. No image has been removed or renamed. Filenames below match the files currently in GitHub. The descriptions identify the screenshot's intended subject from its filename and the recorded lab results; they do not certify that every image has passed a sensitive-data or visual-content review.
 
 ## Evidence Index
 
-| Evidence ID | Proposed screenshot filename | Observation | Related validation |
+| Evidence ID | Screenshot | Subject / intended supporting role | Review status |
 |---|---|---|---|
-| EV-01 | `EV-01_azure_firewall_traffic_logs.png` | Azure Firewall allow/deny events received in Splunk | AZ-01, AZ-02, AZ-05 |
-| EV-02 | `EV-02_splunk_sec001_triggered_alert.png` | Scheduled SEC-001 detection triggered | AZ-03 |
-| EV-03 | `EV-03_nsg_private_outbound_deny.png` | Network Watcher IP flow verify returned Deny | AZ-04 |
-| EV-04 | `EV-04_hybrid_routing_validation.png` | Hybrid route/association evidence, subject to screenshot review | Hybrid routing |
-| EV-05 | `EV-05_splunk_eventhub_input.png` | Event Hub input configuration/initialization, subject to screenshot review | Telemetry integration |
+| EV-01 | [EV-AZURE-01-Firewall-Logs.png](./EV-AZURE-01-Firewall-Logs.png) | Azure Firewall and detection: EV AZURE 01 Firewall Logs.png | Retained; visual/privacy review pending |
+| EV-02 | [EV-AZURE-02-SEC001-Triggered.png](./EV-AZURE-02-SEC001-Triggered.png) | Azure Firewall and detection: EV AZURE 02 SEC001 Triggered.png | Retained; visual/privacy review pending |
+| EV-03 | [EV-AZURE-03-NSG-Deny.png](./EV-AZURE-03-NSG-Deny.png) | Azure Firewall and detection: EV AZURE 03 NSG Deny.png | Retained; visual/privacy review pending |
+| EV-04 | [EV-NETWORK-01-OPNsense-Static-Route.png](./EV-NETWORK-01-OPNsense-Static-Route.png) | Hybrid routing and network controls: EV NETWORK 01 OPNsense Static Route.png | Retained; visual/privacy review pending |
+| EV-05 | [EV-NETWORK-02-OPNsense-Kali-to-DB-Rule.png](./EV-NETWORK-02-OPNsense-Kali-to-DB-Rule.png) | Hybrid routing and network controls: EV NETWORK 02 OPNsense Kali to DB Rule.png | Retained; visual/privacy review pending |
+| EV-06 | [EV-NETWORK-03-UDR-Associations-Verified.png](./EV-NETWORK-03-UDR-Associations-Verified.png) | Hybrid routing and network controls: EV NETWORK 03 UDR Associations Verified.png | Retained; visual/privacy review pending |
+| EV-07 | [EV-NETWORK-04-AZURE-APP-Effective-Routes.png](./EV-NETWORK-04-AZURE-APP-Effective-Routes.png) | Hybrid routing and network controls: EV NETWORK 04 AZURE APP Effective Routes.png | Retained; visual/privacy review pending |
+| EV-08 | [EV-NETWORK-05-WIREGUARD-RouteTable-Association.png](./EV-NETWORK-05-WIREGUARD-RouteTable-Association.png) | Hybrid routing and network controls: EV NETWORK 05 WIREGUARD RouteTable Association.png | Retained; visual/privacy review pending |
+| EV-09 | [EV-MGMT-01-Unauthorized-HTTPS-Blocked.png](./EV-MGMT-01-Unauthorized-HTTPS-Blocked.png) | Management access: EV MGMT 01 Unauthorized HTTPS Blocked.png | Retained; visual/privacy review pending |
+| EV-10 | [EV-SPLUNK-01-Index-Write-Read.png](./EV-SPLUNK-01-Index-Write-Read.png) | Splunk monitoring and integration: EV SPLUNK 01 Index Write Read.png | Retained; visual/privacy review pending |
+| EV-11 | [EV-SPLUNK-02-OPNsense-Syslog-Received.png](./EV-SPLUNK-02-OPNsense-Syslog-Received.png) | Splunk monitoring and integration: EV SPLUNK 02 OPNsense Syslog Received.png | Retained; visual/privacy review pending |
+| EV-12 | [EV-SPLUNK-03-Firewall-Logs-Ingested.png](./EV-SPLUNK-03-Firewall-Logs-Ingested.png) | Splunk monitoring and integration: EV SPLUNK 03 Firewall Logs Ingested.png | Retained; visual/privacy review pending |
+| EV-13 | [EV-SPLUNK-04-Unauthorized-Management-Blocked.png](./EV-SPLUNK-04-Unauthorized-Management-Blocked.png) | Splunk monitoring and integration: EV SPLUNK 04 Unauthorized Management Blocked.png | Retained; visual/privacy review pending |
+| EV-14 | [EV-SPLUNK-05-Syslog-After-WiFi-Block.png](./EV-SPLUNK-05-Syslog-After-WiFi-Block.png) | Splunk monitoring and integration: EV SPLUNK 05 Syslog After WiFi Block.png | Retained; visual/privacy review pending |
+| EV-15 | [EV-SPLUNK-06-eventhub-input-initialization.png](./EV-SPLUNK-06-eventhub-input-initialization.png) | Splunk monitoring and integration: EV SPLUNK 06 eventhub input initialization.png | Retained; visual/privacy review pending |
 
-The index reserves filenames; **images are not yet uploaded**. The original evidence set contains additional network and Splunk screenshots, which must be checked for relevance and duplication before publication.
+## Evidence interpretation
 
-## EV-01 — Azure Firewall Telemetry
+**Azure Firewall logs:** The recorded lab showed three successful TCP/5432 connections to a temporary HTTP test listener and denied TCP/4444 events in Splunk. This is not proof of database authentication.
 
-**Observed:** Allowed test connections to TCP/5432 and denied test traffic to TCP/4444 were recorded in Azure Firewall telemetry ingested into Splunk. TCP/5432 was an HTTP test listener, not a database authentication test.
+**SEC-001:** The scheduled Splunk alert triggered on 3 November 2026; repeated executions should not be described as separate security incidents.
 
-## EV-02 — SEC-001 Detection
+**NSG verification:** Network Watcher returned a Deny decision after removal of a temporary test rule; this is a rule-evaluation result, not a packet capture.
 
-**Observed:** The scheduled repeated-denied-connections alert triggered on 3 November 2026. Multiple alert executions do not establish multiple independent security incidents.
+**OPNsense and local Splunk images:** These may document supporting hybrid-lab behavior, but should not be conflated with the separate Enterprise Network Segmentation project's validation scenarios without a specific cross-reference.
 
-## EV-03 — NSG Restriction
+## Publication review
 
-**Observed:** Network Watcher IP flow verification returned a Deny decision under the private-network outbound restriction. This is an NSG rule evaluation, not an end-to-end packet capture.
-
-## Publication controls
-
-Before uploading, inspect every image for subscription IDs, tenant identifiers, tokens, credentials, sensitive usernames, and connection strings. Redact sensitive information, preserve the relevant evidence, and ensure filenames match the index. Do not publish raw logs or deployment scripts.
+The screenshots are already present in this public repository. Before using them as cited evidence in the project narrative, inspect them for subscription and tenant IDs, usernames, credentials, tokens, internal hostnames and other unnecessary identifiers. **This register update does not redact the images.**
 
 ## Related documentation
 
-- [Security Validation and Evidence](../07-security-validation-evidence.md)
-- [Implemented Security Controls](../06-implemented-security-controls.md)
-- [Architecture Decisions](../04-architecture-decision-records.md)
-
-*Independent educational security architecture laboratory.*
+- [Security Validation Evidence](../07-security-validation-evidence.md)
+- [Security Assessment Findings](../08-security-assessment-findings.md)
+- [Requirements Traceability](../10-requirements-traceability-matrix.md)
+- [Security Assurance](../13-security-assurance-report.md)
