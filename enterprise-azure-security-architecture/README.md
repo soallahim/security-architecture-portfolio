@@ -82,6 +82,10 @@ flowchart LR
 
 [Full Architecture Decision Records](04-architecture-decision-records.md)
 
+## Cloud Resource Lifecycle
+
+After validation, the project's Azure resource group `rg-enterprise-security-lab` was deleted. Azure CLI confirmed that the group no longer existed; a subsequent subscription resource inventory showed only the two regional Network Watcher resources. **Project resource cleanup is verified from the operator's CLI output; final billing reconciliation remains pending.** The retained screenshots and architecture documents represent historical lab evidence, not an active Azure deployment.
+
 ## Security Assurance
 
 The evidence supports selected hybrid connectivity, denied-traffic visibility, centralized log ingestion, a triggered detection, and an NSG rule decision. It does **not** establish complete segmentation across every port and host, application authentication, resilience under failure, or production readiness.
