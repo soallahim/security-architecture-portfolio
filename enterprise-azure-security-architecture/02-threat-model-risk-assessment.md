@@ -1,5 +1,19 @@
 # 02 — Threat Model and Risk Assessment
 
+## Current-state threat and risk interpretation — 3 November 2026
+
+The sections below preserve the **original design-stage threat model and risk register**. Historical risk scores and “Not Evidenced” statuses reflect the predeployment review, not a fresh production risk assessment.
+
+**Evidence-informed updates:**
+- Selected unauthorized hybrid traffic to TCP/4444 was denied and the corresponding Azure Firewall events were ingested by Splunk (AZ-02).
+- A temporary NSG test exception was removed; Network Watcher IP flow verification returned Deny for the evaluated path (AZ-04).
+- The firewall-to-Event-Hubs-to-Splunk pipeline and scheduled SEC-001 alert were observed working (AZ-03, AZ-05).
+- TCP/5432 positive testing confirms reachability to an HTTP listener only, not database access authorization (AZ-01).
+
+**Residual design concerns:** These observations do not eliminate risks of policy bypass through untested paths, tunnel peer compromise, loss of telemetry, or excess identity privileges. Such scenarios remain threat hypotheses unless independently tested. See [detailed STRIDE analysis](11-stride-threat-model.md), [attack paths](12-attack-path-analysis.md), and [security assurance](13-security-assurance-report.md).
+
+---
+
 > **Document context (3 November 2026):** This document preserves the original design and planning baseline. Its planning-stage labels, proposed region, and hypothetical architecture are historical and do not describe the current deployed lab. For the verified implementation and test evidence, see [06 — Implemented Security Controls](./06-implemented-security-controls.md) and [07 — Security Validation Evidence](./07-security-validation-evidence.md).
 **Project:** Enterprise Azure Security Architecture & Monitoring  
 **Status:** Proposed / Not Implemented / Not Tested  
