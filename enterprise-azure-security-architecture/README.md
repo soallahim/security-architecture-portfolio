@@ -62,11 +62,11 @@ flowchart LR
 | AZ-04 | Restrict selected private-network outbound flow | Network Watcher returned **Deny** after test-rule removal | Pass for evaluated NSG rule decision |
 | AZ-05 | Centralize Azure Firewall telemetry | Events indexed in Splunk through Event Hubs | Pass for observed ingestion pipeline |
 
-**Evidence:** [View all 15 uploaded screenshots](evidence/README.md). All images are retained pending individual relevance and privacy review; not every screenshot is necessarily independent evidence for an Azure control.
+**Evidence:** [View all 15 uploaded screenshots](evidence/README.md). All images are retained; the repository owner has confirmed a privacy review, while evidence relevance is being assessed; not every screenshot is necessarily independent evidence for an Azure control.
 
 ## Key Security Finding and Remediation
 
-**AZ-F-01 — Temporary NSG exception retained beyond testing (configuration exposure scenario).** A temporary test exception was removed after validation, and the selected private-network outbound flow was reevaluated using Network Watcher. The resulting decision was **Deny** under `Deny-Private-Networks-Outbound`.
+**AZ-F-01 — Temporary NSG validation exception and post-test cleanup.** A temporary test exception was removed after validation, and the selected private-network outbound flow was reevaluated using Network Watcher. The resulting decision was **Deny** under `Deny-Private-Networks-Outbound`.
 
 **Architectural lesson:** Temporary validation rules require explicit cleanup and post-change verification. This is a documented lab control-correction exercise, **not** evidence of an exploited vulnerability or production security incident.
 
