@@ -70,7 +70,7 @@ Published evidence is selected and sanitized to support architecture and securit
 
 ## Architecture documentation
 
-The project retains its original numbered design and assurance documents. Documents 01–05 record the design-stage baseline; documents 06–07 capture implemented controls and verified laboratory outcomes.
+The original numbered design baseline (01–05) is preserved; subsequent documents record the implementation, assessment, threat analysis, traceability, and evidence-based assurance. This is an architecture case study, not a configuration tutorial.
 
 1. [01 — Business and Security Requirements](./01-business-security-requirements.md)
 2. [02 — Threat Model and Risk Assessment](./02-threat-model-risk-assessment.md)
@@ -79,5 +79,13 @@ The project retains its original numbered design and assurance documents. Docume
 5. [05 — Implementation and Validation Readiness Plan](./05-implementation-validation-readiness-plan.md)
 6. [06 — Implemented Security Controls](./06-implemented-security-controls.md)
 7. [07 — Security Validation Evidence](./07-security-validation-evidence.md)
+8. [08 — Security Assessment Findings](./08-security-assessment-findings.md)
+9. [09 — Security Traffic Flow Matrix](./09-security-traffic-flow-matrix.md)
+10. [10 — Requirements Traceability Matrix](./10-requirements-traceability-matrix.md)
+11. [11 — STRIDE Threat Model](./11-stride-threat-model.md)
+12. [12 — Attack Path Analysis](./12-attack-path-analysis.md)
+13. [13 — Security Assurance Report](./13-security-assurance-report.md)
+
+[Security Validation Evidence Register](./evidence/README.md) — upload reviewed screenshots to the linked evidence folder.
 
 Selected screenshots are published only after security review. The written evidence register records observed results and identifies the supporting evidence; it does not itself constitute a published screenshot.
