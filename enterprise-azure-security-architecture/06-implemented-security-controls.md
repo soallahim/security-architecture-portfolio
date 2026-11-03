@@ -1,29 +1,46 @@
-# Implemented security architecture
+# 06 — Implemented Security Controls
 
-## Hybrid connectivity and network controls
+## Purpose and scope
 
-- Azure virtual network: `10.50.0.0/16`.
-- Azure application workload: `10.50.10.4`.
-- Azure Firewall private IP: `10.50.0.4`.
-- WireGuard provides connectivity between the Azure laboratory and local network segments.
-- Azure Firewall Policy, UDRs, and NSG controls govern tested traffic paths.
-- Authorized APP-to-local test listener traffic to TCP 5432 succeeded in 3/3 recorded tests.
-- Denied TCP 4444 events were visible in the central logging pipeline.
-- Temporary test NSG rule was removed; IP flow verify confirmed the named deny rule.
+This document records the security architecture controls implemented or observed in the Azure-to-local laboratory. It describes **control objectives, enforcement boundaries, design decisions and assurance evidence**, not deployment commands. Results apply to the selected test paths, not to a production environment.
 
-## Logging and detection
+## Architecture control matrix
 
-Azure Firewall diagnostic categories enabled: `AZFWNetworkRule`, `AZFWApplicationRule`, `AZFWNatRule`, and `AZFWThreatIntel`.
+| Control area | Implemented architecture response | Security objective | Validation reference |
+|---|---|---|---|
+| Hybrid connectivity | WireGuard tunnel between Azure and the local segmented laboratory | Establish controlled routed connectivity across the cloud/local trust boundary | AZ-01; [hybrid routing evidence](./evidence/README.md) |
+| Cloud network enforcement | Azure Firewall Policy and subnet-level NSG rules | Permit scoped required flows and restrict unauthorized destinations/services | AZ-01, AZ-02, AZ-04 |
+| Route governance | Azure route tables and verified effective routes / associations | Make intended traffic paths explicit and subject to security enforcement | [routing evidence](./evidence/README.md) |
+| Firewall telemetry | Azure Firewall diagnostic categories streamed to Azure Event Hubs | Retain security-relevant network policy observations for analysis | AZ-05 |
+| Centralized monitoring | Splunk Enterprise ingests Event Hub telemetry into `azure_security` | Provide searchable cloud firewall events in a centralized SIEM | AZ-05 |
+| Detection | SEC-001 scheduled correlation alert for repeated denied connections | Detect recurring network policy denials in indexed events | AZ-03 |
+| Ingestion access | Event Hub-scoped Azure Event Hubs Data Receiver assignment for the ingestion identity | Restrict event-consumption permissions to the required resource | Recorded configuration |
+| Checkpoint transport | Storage HTTPS-only, TLS 1.2 and anonymous blob access disabled | Reduce exposure of ingestion checkpoint storage | Recorded configuration |
 
-The pipeline sends firewall telemetry to Azure Event Hubs, consumed through the Splunk Add-on for Microsoft Cloud Services, with events indexed in `azure_security`.
+## Network security and trust boundaries
 
-The scheduled Splunk alert `SEC-001 — Repeated Firewall Denied Connections` triggered during validation on 3 November 2026.
+The Azure virtual network uses the `10.50.0.0/16` address space. The application test VM is `10.50.10.4`; Azure Firewall has private address `10.50.0.4`. A WireGuard gateway connects the Azure environment to the local segmented lab. Routing and policy enforcement are separate design concerns: an established tunnel does not imply that every service or destination is authorized.
 
-## Identity and transport controls
+A temporary HTTP listener at `192.168.20.10:5432` served as a connectivity target. **Three of three** recorded TCP connection tests succeeded. This demonstrates selected TCP reachability only; no PostgreSQL deployment, database authentication, or application authorization is claimed.
 
-- Splunk's dedicated Entra service principal was granted `Azure Event Hubs Data Receiver` at the specific Event Hub scope.
-- Checkpoint storage enforces HTTPS and TLS 1.2; anonymous public blob access is disabled.
+A separate TCP/4444 test produced denied firewall events, which were observed in Splunk. After the temporary NSG test exception was removed, Network Watcher IP flow verification reported **Deny** under `Deny-Private-Networks-Outbound`. The latter result establishes the evaluated NSG rule decision, not an independent end-to-end packet traversal.
 
-## Engineering note
+## Monitoring architecture
 
-These statements reflect observed laboratory behavior and configuration reviews. Infrastructure templates, operational scripts, and manual deployment actions were used at different stages; the project does not claim complete automated reconstruction from Bicep alone.
+```mermaid
+flowchart LR
+    FW["Azure Firewall"] -->|Diagnostic logs| EH["Azure Event Hubs"]
+    EH -->|Event consumption| ADDON["Splunk Add-on for Microsoft Cloud Services"]
+    ADDON --> IDX["Splunk Enterprise / azure_security"]
+    IDX --> DET["SEC-001 scheduled detection"]
+```
+
+The recorded diagnostics include `AZFWNetworkRule`, `AZFWApplicationRule`, `AZFWNatRule`, and `AZFWThreatIntel`. SEC-001 triggered during the 3 November 2026 laboratory validation. Repeated alert executions are not represented as separate confirmed incidents.
+
+## Architecture decisions and assurance
+
+The design combines network segmentation and restrictive policies with centralized visibility. The key architectural trade-off is to maintain practical hybrid connectivity without treating the tunnel as a blanket authorization boundary. Event Hubs separates Azure event production from SIEM consumption; a receiver-scoped identity reduces unnecessary privileges.
+
+The implemented controls and recorded configuration are **not** a claim of comprehensive network assurance or production compliance. For evidence and test-specific conclusions, consult the linked documents.
+
+[Architecture](03-target-security-architecture.md) · [ADRs](04-architecture-decision-records.md) · [Traffic Matrix](09-security-traffic-flow-matrix.md) · [Validation](07-security-validation-evidence.md) · [Evidence Register](evidence/README.md)
