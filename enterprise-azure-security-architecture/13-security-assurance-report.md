@@ -31,7 +31,7 @@ The Azure hybrid security architecture laboratory demonstrates a traceable seque
 
 **Not claimed:** Enterprise-wide segmentation assurance, real database authentication, comprehensive attack-path testing, production resilience, or regulatory certification.
 
-All 15 screenshots are present in the evidence folder and indexed by their actual filenames; content and privacy review remains pending.
+All 15 screenshots are present in the evidence folder and indexed by their actual filenames; the repository owner has confirmed review for sensitive information; evidentiary relevance is assessed separately.
 
 ## Traceability
 
