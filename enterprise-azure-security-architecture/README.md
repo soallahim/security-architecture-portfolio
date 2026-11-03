@@ -90,15 +90,15 @@ The evidence supports selected hybrid connectivity, denied-traffic visibility, c
 
 ## Project Documentation
 
-The project follows a requirements-to-assurance security architecture lifecycle. Documents 01–05 preserve the original planning baseline and include a current-state reconciliation; 06–13 document implementation outcomes, analysis, and assurance.
+The project follows a requirements-to-assurance security architecture lifecycle. Documents 01–05 now present a consolidated current-state architecture narrative while retaining the original requirement, risk, ADR and planned-test identifiers for traceability; 06–13 document implementation outcomes, analysis, and assurance.
 
 | # | Document | Purpose |
 |---|---|---|
 | 01 | [Business & Security Requirements](01-business-security-requirements.md) | Business objectives, security requirements and original scope |
-| 02 | [Threat Model & Risk Assessment](02-threat-model-risk-assessment.md) | Initial threat scenarios, risks and treatment priorities |
-| 03 | [Target Security Architecture](03-target-security-architecture.md) | Original design and current logical hybrid architecture |
+| 02 | [Threat Model & Risk Assessment](02-threat-model-risk-assessment.md) | Risk register, treatment status and STRIDE mapping |
+| 03 | [Target Security Architecture](03-target-security-architecture.md) | Current logical hybrid architecture and trust boundaries |
 | 04 | [Architecture Decision Records](04-architecture-decision-records.md) | Alternatives, decisions, trade-offs and observed outcomes |
-| 05 | [Implementation & Validation Readiness Plan](05-implementation-validation-readiness-plan.md) | Historical execution gates and current validation reconciliation |
+| 05 | [Implementation & Validation Readiness Plan](05-implementation-validation-readiness-plan.md) | Execution workstreams, observed tests and planned-test reconciliation |
 | 06 | [Implemented Security Controls](06-implemented-security-controls.md) | Control objectives, trust boundaries and implementation evidence |
 | 07 | [Security Validation Evidence](07-security-validation-evidence.md) | Executed tests, observations and validation interpretation |
 | 08 | [Security Assessment Findings](08-security-assessment-findings.md) | Findings, corrective actions and assurance implications |
